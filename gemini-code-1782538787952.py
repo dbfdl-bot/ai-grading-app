@@ -4,28 +4,32 @@ import re
 # 페이지 기본 설정 및 스타일 정의
 st.set_page_config(page_title="국어 서논술형 답안 작성 연습", layout="wide", page_icon="✏️")
 
-# 커스텀 CSS를 통한 UI 디자인 개선
+# 커스텀 CSS: image_5630fe.png 스타일 재현 및 UI 개선
 st.markdown("""
     <style>
+    /* 제목 및 본문 스타일 */
     .main-title {
-        font-size: 2.4rem !important;
+        font-size: 2.3rem !important;
         font-weight: 800 !important;
         color: #2C3E50;
         margin-bottom: 0.5rem;
     }
     .sub-title {
-        color: #7F8C8D;
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
+        color: #5A626A;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-bottom: 1.8rem;
     }
+    
+    /* 탭 스타일 조정 */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
+        gap: 4px;
     }
     .stTabs [data-baseweb="tab"] {
         background-color: #F8F9FA;
         border: 1px solid #E9ECEF;
         border-radius: 4px 4px 0px 0px;
-        padding: 10px 20px;
+        padding: 8px 16px;
         font-weight: 600;
         color: #495057;
     }
@@ -34,19 +38,59 @@ st.markdown("""
         border-top: 3px solid #E74C3C !important;
         color: #E74C3C !important;
     }
-    .criterion-box {
-        background-color: #F1F2F6;
-        padding: 15px;
-        border-left: 5px solid #2F3542;
-        border-radius: 4px;
+    
+    /* image_5630fe.png 내 [학생 일기] 등 지문 박스 스타일 구현 */
+    .passage-box {
+        background-color: #EBF3FC;
+        padding: 18px;
+        border-radius: 8px;
+        color: #1E3A5F;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-top: 10px;
         margin-bottom: 15px;
+    }
+    .passage-title {
+        font-weight: bold;
+        color: #0056B3;
+    }
+    
+    /* image_5630fe.png 내 <조건> 박스 스타일 구현 */
+    .condition-container {
+        background-color: #F1F3F5;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        border: 1px solid #E2E8F0;
+    }
+    .condition-title {
+        font-weight: bold;
+        font-size: 1.05rem;
+        color: #212529;
+        margin-bottom: 10px;
+    }
+    .condition-list {
+        margin: 0;
+        padding-left: 20px;
+        line-height: 1.7;
+        color: #343A40;
+    }
+    
+    /* 입력 안내 라벨 스타일 */
+    .input-label {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #212529;
+        margin-top: 15px;
+        margin-bottom: 5px;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # 상단 헤더 UI
 st.markdown('<div class="main-title">✏️ [국어] 서·논술형 답안 작성 연습</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">작성한 답안을 입력한 뒤 문제의 조건에 맞게 작성하였는지의 여부를 확인하세요. 수업 시간에 배운 내용을 복습할 때 참고용으로 활용하세요.</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">작성한 답안을 입력한 뒤 문제의 조건에 맞게 작성하였는지의 여부를 확인하세요. 수업시간에 배운 내용을 복습할 때 마음이 막막할까봐 만든 자료이므로, 참고로만 활용하세요. 선생님과 수업 시간에 공부한 내용이 답안 작성의 초점이에요 😉</div>', unsafe_allow_html=True)
 
 # 세션 상태 초기화 (진행 상황 체크용)
 if "resolved" not in st.session_state:
@@ -54,7 +98,7 @@ if "resolved" not in st.session_state:
 
 # 진행 상황바 및 상단 UI 배치
 resolved_count = sum(st.session_state.resolved.values())
-st.write(f"✅ **완료된 세트: {resolved_count} / 3**")
+st.write(f"✅ **완료된 문제: {resolved_count} / 3**")
 st.progress(resolved_count / 3)
 
 # 처음부터 다시 풀기 버튼
@@ -68,222 +112,212 @@ st.markdown("---")
 def normalize(text):
     return re.sub(r'\s+', '', text).strip()
 
-# 이미지에 제시된 문항 전개 방식처럼 탭(Tab) 스타일로 화면 분할
-tab1, tab2, tab3, tab4 = st.tabs(["문제 세트 1", "문제 세트 2", "문제 세트 3", "📚 복습할 내용"])
+# 문제 탭 레이아웃 설정
+tab1, tab2, tab3, tab4 = st.tabs(["문제 1", "문제 2", "문제 3", "📚 복습할 내용"])
 
 # ==============================================================================
-# [탭 1] 세트 1 문항 공간
+# [문제 1] 사회적 촉진과 억제
 # ==============================================================================
 with tab1:
-    st.markdown("### 1️⃣ 경쟁도 없는데 왜 집중이 잘 됐을까? — 사회적 촉진과 억제 [cite: 14]")
+    st.markdown("## 경쟁도 없는데 왜 집중이 잘 됐을까? — 올포트 vs 트리플렛")
     
-    with st.expander("📖 [지문 보기 / 숨기기]", expanded=True):
-        st.info("""
-        **기자**: '사회적 촉진'과 '사회적 억제'를 일상 학습에 어떻게 적용할 수 있을까요? [cite: 15]
-        **전문가**: 비교적 쉬운 취미 생활이나 큰 노력을 들일 필요가 없는 과제를 할 때는 커피숍이나 도서관이 더 효율적일 수 있습니다. 공부 모임을 만드는 것도 좋죠. [cite: 17, 19, 20]
-        **기자**: 그렇다면 어렵고 복잡한 과제를 할 때는요? [cite: 21]
-        **전문가**: 그럴 때는 반대입니다. 지나치게 어렵거나 도전이 필요한 과제는 충분히 연습하며 익숙해질 때까지 차분하게 혼자 집중하는 시간을 가지는 것이 좋습니다. [cite: 22]
-        """)
-        
-    st.markdown("#### [서·논술형 1] 표 빈칸 채우기 [cite: 23]")
-    c1, c2, c3 = st.columns(3)
-    ans_1_1 = c1.text_input("(1) 어려운 과제와 대비되는 '과제의 특성' [cite: 24]", key="1_1")
-    ans_1_2 = c2.text_input("(2) 어려운 과제 해결을 위한 '효율적인 환경 및 방법' [cite: 24]", key="1_2")
-    ans_1_3 = c3.text_input("(3) 빈칸에 들어갈 올바른 '심리 현상' 용어 [cite: 24]", key="1_3")
+    # 지문 영역 (image_5630fe.png 스타일 반영)
+    st.markdown("""
+    <div class="passage-box">
+        <span class="passage-title">[학생 일기]</span> 오늘 카페에 가서 영어 단어를 외웠다. 옆자리에는 모르는 대학생 두 명이 열심히 태블릿을 두드리며 공부하고 있었다. 그 사람들과 내가 같은 시험을 보는 것도 아닌데 이상하게, 나도 가만히 있을 수 없어서 평소보다 단어가 훨씬 잘 외워졌다.
+    </div>
+    """, unsafe_allow_html=True)
     
-    st.markdown("#### [서·논술형 2] 조건에 맞춰 설명문 완성하기 [cite: 29]")
-    st.markdown('<div class="criterion-box"><b>[조건]</b> 서로 다른 설명 방법을 활용하여 문장 완성 후 끝에 명칭 표기 (예: (예시), (대조)) [cite: 33, 35]</div>', unsafe_allow_html=True)
-    ans_2_1 = st.text_input("첫 번째 이어질 문장 (1) [cite: 36]", key="2_1")
-    ans_2_2 = st.text_input("두 번째 이어질 문장 (2) [cite: 37]", key="2_2")
+    st.markdown("이 현상은 노먼 트리플렛과 플로이드 올포트 중 누구의 이론으로 더 잘 설명되는지 판단하고, 두 학자의 이론 차이가 드러나게 서술하시오. [6점]")
     
-    st.markdown("#### [서·논술형 3] 영상 기획안 연출 및 효과 작성 [cite: 39, 40]")
-    ans_3_v = st.text_area("시각 요소(Ⓐ) 연출 계획 및 기대 효과 서술 [cite: 55, 56]", key="3_1")
-    ans_3_a = st.text_area("청각 요소(Ⓑ) 연출 계획 및 기대 효과 서술 [cite: 57, 58]", key="3_2")
+    # 조건 영역 (image_5630fe.png 스타일 반영)
+    st.markdown("""
+    <div class="condition-container">
+        <div class="condition-title">〈조건〉</div>
+        <ul class="condition-list">
+            <li>🎯 답안은 반드시 두 학자 중 한 명을 고를 것</li>
+            <li>🎯 답안 안에 자신이 선택한 학자의 주장이 명확히 제시될 것</li>
+            <li>🎯 선택하지 않은 학자의 이론이 왜 이 사례에 맞지 않는지도 한 문장 이상 서술할 것</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 답안 입력 영역 분리
+    st.markdown('<div class="input-label">• 답안 입력</div>', unsafe_allow_html=True)
+    ans_1 = st.text_area("답안을 여기에 입력하세요.", key="q_1", label_visibility="collapsed", placeholder="답안을 입력해주세요.")
+    
+    if st.button("문제 1 채점하기", type="primary"):
+        if not ans_1.strip():
+            st.warning("답안을 입력한 후 채점 버튼을 눌러주세요.")
+        else:
+            score = 0
+            st.markdown("#### 🎯 채점 결과 및 피드백")
+            
+            # 1. 학자 선택 여부 및 결론 확인
+            if '올포트' in ans_1:
+                st.success("✅ [조건 1 통과] '올포트'를 올바르게 선택했습니다.")
+                score += 2
+                
+                # 올포트의 주장 특성 확인
+                if '단순' in ans_1 or '존재' in ans_1 or '타인' in ans_1 or '혼자' in ans_1:
+                    st.success("✅ [조건 2 통과] 선택한 학자(올포트)의 이론적 특성이 답안에 잘 드러나 있습니다.")
+                    score += 2
+                else:
+                    st.error("❌ [조건 2 미흡] 올포트 이론의 핵심(타인의 단순한 존재가 능률을 높임)에 대한 설명이 부족합니다.")
+            
+            elif '트리플렛' in ans_1:
+                st.error("❌ [결론 오류 / 오개념] 트리플렛은 '경쟁'이나 '협동'이 있을 때 능률이 오른다고 보았으므로, 경쟁이 없는 본 지문의 사례를 설명하기에는 부적절합니다. (오답 처리)")
+            else:
+                st.error("❌ [조건 1 미흡] '올포트'와 '트리플렛' 중 어떤 학자의 이론에 해당하는지 명시하지 않았습니다.")
+                
+            # 2. 선택하지 않은 학자 비판 검증
+            if '트리플렛' in ans_1 and '경쟁' in ans_1 and '올포트' in ans_1:
+                if '올포트' in ans_1 and ('없' in ans_1 or '아님' in ans_1): 
+                    st.success("✅ [조건 3 통과] 트리플렛 이론이 이 사례에 맞지 않는 이유(경쟁이 없음)를 논리적으로 서술했습니다.")
+                    score += 2
+            elif '올포트' in ans_1 and not '트리플렛' in ans_1:
+                st.error("❌ [조건 3 미흡] 선택하지 않은 학자(트리플렛)의 이론이 맞지 않는 이유에 대한 서술이 누락되었습니다.")
 
-    if st.button("세트 1 채점 및 피드백 받기", type="primary", key="btn_1"):
-        score = 0
-        st.markdown("#### 🎯 세트 1 채점결과")
-        
-        if ('쉬운' in ans_1_1 or '낮은' in ans_1_1) and ('과제' in ans_1_1 or '취미' in ans_1_1):
-            st.success("✔️ [서·논술형 1-1] 정답! 과제의 특성을 정확히 찾았습니다.")
-            score += 1
-        else:
-            st.error("❌ [서·논술형 1-1] 오답: 지문에서 '비교적 쉬운 취미 생활이나 과제' 부분을 확인하세요. [cite: 17]")
-            
-        if '혼자' in ans_1_2 and ('집중' in ans_1_2 or '차분' in ans_1_2):
-            st.success("✔️ [서·논술형 1-2] 정답! 효율적인 환경 환경을 올바르게 제시했습니다.")
-            score += 1
-        else:
-            st.error("❌ [서·논술형 1-2] 오답: '차분하게 혼자 집중하는 시간'의 의미가 들어가야 합니다. [cite: 22]")
-            
-        if normalize(ans_1_3) == "사회적억제":
-            st.success("✔️ [서·논술형 1-3] 정답! 정확한 용어를 기술했습니다.")
-            score += 1
-        else:
-            st.error("❌ [서·논술형 1-3] 오답: 올바른 심리 용어는 '사회적 억제'입니다. [cite: 15]")
-            
-        # 설명 방법 검증 부분
-        m1 = re.search(r'\(([^)]+)\)', ans_2_1)
-        m2 = re.search(r'\(([^)]+)\)', ans_2_2)
-        if m1 and m2:
-            st.success("✔️ [서·논술형 2] 조건 충족! 설명 방법의 명칭과 형태가 모두 적절합니다.")
-            score += 2
-        else:
-            st.error("❌ [서·논술형 2] 감점: 문장 끝에 괄호를 사용하여 설명 방법 명칭을 적었는지 확인하세요. [cite: 35]")
-            
-        if ('혼자' in ans_3_v or '독립' in ans_3_v) and ('조용' in ans_3_a or '소음' in ans_3_a):
-            st.success("✔️ [서·논술형 3] 정답! 복합양식성의 연출 의도가 훌륭합니다.")
-            score += 2
-        else:
-            st.error("❌ [서·논술형 3] 감점: 어려운 과제 특성에 맞는 '혼자/조용함'의 성격이 시청각에 드러나야 합니다. [cite: 53]")
-
-        if score >= 5:
-            st.session_state.resolved[1] = True
-            st.balloons()
+            if score == 6:
+                st.session_state.resolved[1] = True
+                st.balloons()
 
 # ==============================================================================
-# [탭 2] 세트 2 문항 공간
+# [문제 2] 정전기의 특징
 # ==============================================================================
 with tab2:
-    st.markdown("### 2️⃣ 겨울철 불청객의 비밀 — 정전기의 특징 [cite: 60, 61]")
+    st.markdown("## 겨울철 불청객의 비밀 — 흐르지 않는 전기")
     
-    with st.expander("📖 [지문 보기 / 숨기기]"):
-        st.info("""
-        **전문가**: 정전기란 전하가 정지 상태로 있어 그 분포가 시간적으로 변화하지 않는 전기를 말합니다. 쉽게 말해 흐르지 않고 머물러 있는 전기입니다. [cite: 62, 63]
-        실생활에서 쓰는 전기가 '흐르는 물'이라면, 정전기는 '높은 곳에 고여 있는 물'과 같습니다. 전하가 이동하지 않고 머물러 있어 높은 전압에도 위험하지는 않습니다. [cite: 65, 67]
-        """)
-        
-    st.markdown("#### [서·논술형 1] 표 빈칸 채우기 [cite: 69]")
-    c1, c2, c3 = st.columns(3)
-    ans_2_1_1 = c1.text_input("(1) 정전기의 '물의 상태 비유' [cite: 70]", key="2_1_1")
-    ans_2_1_2 = c2.text_input("(2) 정전기의 '전하의 상태' [cite: 70]", key="2_1_2")
-    ans_2_1_3 = c3.text_input("(3) 정전기의 '위험성' 여부 [cite: 70]", key="2_1_3")
+    st.markdown("""
+    <div class="passage-box">
+        <span class="passage-title">[과학 에세이]</span> 실생활에서 쓰는 전기가 '흐르는 물'이라면, 정전기는 '높은 곳에 고여 있는 물'과 같습니다. 전하가 이동하지 않고 머물러 있기 때문에 높은 전압을 가졌음에도 우리에게 치명적이거나 위험하지는 않습니다.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("정전기가 지닌 전하의 상태를 지문에 제시된 비유를 활용하여 설명하고, 실생활 전기와의 차이점을 바탕으로 위험성 여부에 대한 결론을 내어 서술하시오. [6점]")
+    
+    st.markdown("""
+    <div class="condition-container">
+        <div class="condition-title">〈조건〉</div>
+        <ul class="condition-list">
+            <li>🎯 '물'과 관련된 지문 속 비유 표현을 그대로 활용할 것</li>
+            <li>🎯 전하의 움직임 상태(이동 여부)가 답안에 명확히 포함될 것</li>
+            <li>🎯 흐르는 실생활 전기와 대조하여 위험하지 않다는 결론을 정확히 명시할 것</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('<div class="input-label">• 답안 입력</div>', unsafe_allow_html=True)
+    ans_2 = st.text_area("답안을 여기에 입력하세요.", key="q_2", label_visibility="collapsed", placeholder="답안을 입력해주세요.")
 
-    st.markdown("#### [서·논술형 2] 논리적 흐름에 따른 설명문 작성 [cite: 74]")
-    ans_2_2_1 = st.text_input("이어지는 문장 (1) [cite: 82]", key="2_2_1")
-    ans_2_2_2 = st.text_input("이어지는 문장 (2) [cite: 83]", key="2_2_2")
-
-    st.markdown("#### [서·논술형 3] 복합양식성 고려 영상 연출 [cite: 85, 99]")
-    ans_2_3_v = st.text_area("시각 요소(Ⓐ) 연출 계획 및 지문 근거 효과 서술 [cite: 102, 103]", key="2_3_v")
-    ans_2_3_a = st.text_area("청각 요소(Ⓑ) 연출 계획 및 지문 근거 효과 서술 [cite: 104, 105]", key="2_3_a")
-
-    if st.button("세트 2 채점 및 피드백 받기", type="primary", key="btn_2"):
-        score2 = 0
-        if '고여' in ans_2_1_1 or '멈춘' in ans_2_1_1:
-            st.success("✔️ [서·논술형 1-1] 정답! 정지된 물의 속성을 잘 포착했습니다.")
-            score2 += 1
+    if st.button("문제 2 채점하기", type="primary"):
+        if not ans_2.strip():
+            st.warning("답안을 입력한 후 채점 버튼을 눌러주세요.")
         else:
-            st.error("❌ [서·논술형 1-1] 오답: 지문에 제시된 비유인 '고여 있는 물'을 확인하세요. [cite: 65]")
+            score = 0
+            st.markdown("#### 🎯 채점 결과 및 피드백")
             
-        if '이동하지' in ans_2_1_2 or '머물' in ans_2_1_2 or '정지' in ans_2_1_2:
-            st.success("✔️ [서·논술형 1-2] 정답! 전하의 상태를 정확하게 작성했습니다.")
-            score2 += 1
-        else:
-            st.error("❌ [서·논술형 1-2] 오답: 전하가 '이동하지 않고 머물러 있음'이 명시되어야 합니다. [cite: 67]")
-            
-        if '위험하지' in ans_2_1_3 or '안전' in ans_2_1_3:
-            st.success("✔️ [서·논술형 1-3] 정답! 위험성에 대한 올바른 결론입니다.")
-            score2 += 1
-        else:
-            st.error("❌ [서·논술형 1-3] 오답: 높은 전압에도 불구하고 '위험하지 않다'가 정답입니다. [cite: 67]")
-            
-        if '란' in ans_2_2_1 or '말한다' in ans_2_2_1 or '물' in ans_2_2_2:
-            st.success("✔️ [서·논술형 2] 정답! 정의와 비교/대조의 설명 방법 특성이 잘 드러납니다.")
-            score2 += 2
-        else:
-            st.error("❌ [서·논술형 2] 감점: 지문의 내용(개념 정의 및 물 비유)을 논리적으로 연결해 주세요. [cite: 62, 65]")
+            if '고여' in ans_2 or '고인 물' in ans_2:
+                st.success("✅ [조건 1 통과] '고여 있는 물' 비유를 적절히 활용했습니다.")
+                score += 2
+            else:
+                st.error("❌ [조건 1 미흡] 지문에 제시된 물의 비유 표현('고여 있는 물')이 나타나 있지 않습니다.")
+                
+            if '이동하지' in ans_2 or '머물' in ans_2 or '멈춰' in ans_2:
+                if '흐르는' in ans_2 and not '실생활' in ans_2:
+                    st.error("❌ [오개념 방지] 정전기의 전하 상태 설명에 실생활 전기의 특성('흐름')을 혼동하여 사용했습니다.")
+                else:
+                    st.success("✅ [조건 2 통과] 전하가 이동하지 않고 머물러 있는 상태를 정확히 기술했습니다.")
+                    score += 2
+            else:
+                st.error("❌ [조건 2 미흡] 전하가 움직이지 않고 멈춰 있다는 상태 설명이 누락되었습니다.")
+                
+            if '위험하지' in ans_2 or '안전' in ans_2:
+                st.success("✅ [조건 3 통과] 실생활 전기와 대조하여 위험하지 않다는 명확한 결론 방향을 제시했습니다.")
+                score += 2
+            else:
+                st.error("❌ [조건 3 미흡] 문장 마지막에 '위험하지 않다'는 최종 결론이 빠져 있습니다.")
 
-        if ('댐' in ans_2_3_v or '호수' in ans_2_3_v or '고여' in ans_2_3_v) and ('고요' in ans_2_3_a or '침묵' in ans_2_3_a):
-            st.success("✔️ [서·논술형 3] 정답! 지문의 내용을 시청각적으로 완벽하게 치환했습니다.")
-            score2 += 2
-        else:
-            st.error("❌ [서·논술형 3] 감점: 실생활 전기의 거센 물소리와 반대되는 정적인 연출이 필요합니다. [cite: 92]")
-
-        if score2 >= 5:
-            st.session_state.resolved[2] = True
-            st.balloons()
+            if score == 6:
+                st.session_state.resolved[2] = True
+                st.balloons()
 
 # ==============================================================================
-# [탭 3] 세트 3 문항 공간
+# [문제 3] AI 그림과 예술
 # ==============================================================================
 with tab3:
-    st.markdown("### 3️⃣ 알고리즘 초상화와 가치 — 인공지능 그림과 예술 [cite: 107, 108]")
+    st.markdown("## 알고리즘 초상화 — 인공지능 작품을 예술로 볼 수 있는가")
     
-    with st.expander("📖 [지문 보기 / 숨기기]"):
-        st.info("""
-        **전문가**: 인간의 작품에는 작가의 고유한 감정, 철학, 삶의 경험, 세상을 바라보는 관점 등 내외부적인 요소가 종합적으로 담겨 있어 예술입니다. [cite: 114]
-        반면 인공 지능은 감정도 느끼지 못하고 독자적인 철학이나 이야기가 없기 때문에 이를 예술로 보기는 어렵습니다. [cite: 115]
-        그러나 기존 미술계에 큰 변화를 가져왔고 예술의 범주를 확장할 수 있다는 점에서 상징적인 가치를 지닙니다. [cite: 117, 118]
-        """)
-        
-    st.markdown("#### [서·논술형 1] 표 빈칸 채우기 [cite: 119]")
-    c1, c2, c3 = st.columns(3)
-    ans_3_1_1 = c1.text_input("(1) 인공지능 그림의 올림픽 경기 비유 [cite: 120]", key="3_1_1")
-    ans_3_1_2 = c2.text_input("(2) 인공지능 작품을 예술로 볼 수 있는가(근거 포함) [cite: 120]", key="3_1_2")
-    ans_3_1_3 = c3.text_input("(3) 인공지능 예술로서의 상징적 가치 [cite: 120]", key="3_1_3")
+    st.markdown("""
+    <div class="passage-box">
+        <span class="passage-title">[비평문 발췌]</span> 인간의 작품에는 작가의 고유한 감정, 철학, 세상을 바라보는 관점이 녹아 있습니다. 반면 인공지능은 데이터 조합 능력이 뛰어날 뿐 독자적인 철학이나 이야기가 없습니다. 그러나 기존 미술계의 범주를 확장했다는 상징적 가치는 분명히 존재합니다.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("인공지능의 그림을 진정한 예술 작품으로 인정하기 어려운 이유를 인간의 작품 특성과 대조하여 서술하고, 그럼에도 불구하고 인정할 수 있는 가치는 무엇인지 서술하시오. [6점]")
+    
+    st.markdown("""
+    <div class="condition-container">
+        <div class="condition-title">〈조건〉</div>
+        <ul class="condition-list">
+            <li>🎯 인간의 작품이 가지는 고유한 구성 요소적 특징이 답안에 드러날 것</li>
+            <li>🎯 인공지능에게는 그것(요소)이 왜 부재하는지 대조적 성격으로 밝힐 것</li>
+            <li>🎯 마지막 문장에는 인공지능 그림이 지닌 미술사적 가치 결론이 포함될 것</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('<div class="input-label">• 답안 입력</div>', unsafe_allow_html=True)
+    ans_3 = st.text_area("답안을 여기에 입력하세요.", key="q_3", label_visibility="collapsed", placeholder="답안을 입력해주세요.")
 
-    st.markdown("#### [서·논술형 2] 조건에 따른 설명문 작성 [cite: 125]")
-    ans_3_2_1 = st.text_input("이어지는 문장 (1) [cite: 130]", key="3_2_1")
-    ans_3_2_2 = st.text_input("이어지는 문장 (2) [cite: 131]", key="3_2_2")
-
-    st.markdown("#### [서·논술형 3] 마음에 울림을 주는 진정한 예술 연출 [cite: 137, 146]")
-    ans_3_3_v = st.text_area("시각 요소(Ⓐ) 연출 계획 및 지문 근거 효과 서술 [cite: 155, 156]", key="3_3_v")
-    ans_3_3_a = st.text_area("청각 요소(Ⓑ) 연출 계획 및 지문 근거 효과 서술 [cite: 157, 158]", key="3_3_a")
-
-    if st.button("세트 3 채점 및 피드백 받기", type="primary", key="btn_3"):
-        score3 = 0
-        if '로봇' in ans_3_1_1 and '피겨' in ans_3_1_1:
-            st.success("✔️ [서·논술형 1-1] 정답! 올림픽 비유 대상을 정확하게 짚어냈습니다.")
-            score3 += 1
+    if st.button("문제 3 채점하기", type="primary"):
+        if not ans_3.strip():
+            st.warning("답안을 입력한 후 채점 버튼을 눌러주세요.")
         else:
-            st.error("❌ [서·논술형 1-1] 오답: 지문에 서술된 '로봇의 피겨 스케이팅 연기' 내용을 확인하세요. [cite: 113]")
+            score = 0
+            st.markdown("#### 🎯 채점 결과 및 피드백")
             
-        if ('아니다' in ans_3_1_2 or '어렵다' in ans_3_1_2) and ('감정' in ans_3_1_2 or '철학' in ans_3_1_2):
-            st.success("✔️ [서·논술형 1-2] 정답! 예술 판단의 방향성과 핵심 근거를 충족했습니다.")
-            score3 += 1
-        else:
-            st.error("❌ [서·논술형 1-2] 오답: '예술로 보기 어렵다'는 결론과 '감정/철학 부재'라는 지문 속 근거가 들어가야 합니다. [cite: 115]")
-            
-        if '변화' in ans_3_1_3 or '확장' in ans_3_1_3 or '상징' in ans_3_1_3:
-            st.success("✔️ [서·논술형 1-3] 정답! 인공지능 작품의 미술사적 의의를 명확히 기술했습니다.")
-            score3 += 1
-        else:
-            st.error("❌ [서·논술형 1-3] 오답: 지문 후반부의 '미술계 변화' 혹은 '예술 범주 확장' 내용을 참고하세요. [cite: 117, 118]")
+            if '감정' in ans_3 or '철학' in ans_3 or '관점' in ans_3:
+                st.success("✅ [조건 1 통과] 인간 작품의 특성인 감정 및 철학 요소를 정확히 언급했습니다.")
+                score += 2
+            else:
+                st.error("❌ [조건 1 미흡] 인간 작품만이 지닌 핵심 내적 요소(감정, 철학 등)에 대한 설명이 없습니다.")
+                
+            if '없' in ans_3 or '부재' in ans_3 or '아니다' in ans_3:
+                if '기계음' in ans_3: # 타 단원 오개념 믹스 방지
+                    st.error("❌ [오개념 발견] 영상/청각 단원의 개념 키워드('기계음')가 본문 비평문 설명에 잘못 혼용되었습니다.")
+                else:
+                    st.success("✅ [조건 2 통과] 인공지능에게는 이러한 주체적 감정이나 철학이 없다는 점을 명확히 대조했습니다.")
+                    score += 2
+            else:
+                st.error("❌ [조건 2 미흡] 인공지능에게 해당 요소들이 왜 결여되어 있는지에 대한 대조 설명이 부족합니다.")
+                
+            if '가치' in ans_3 or '범주' in ans_3 or '확장' in ans_3 or '변화' in ans_3:
+                st.success("✅ [조건 3 통과] 예술의 범주 확장 혹은 상징적 가치라는 최종 결론 방향을 올바르게 제시했습니다.")
+                score += 2
+            else:
+                st.error("❌ [조건 3 미흡] 한계점 외에 인공지능 그림이 주는 '미술사적 가치/의의'에 대한 최종 결론 서술이 빠져 있습니다.")
 
-        if '감정' in ans_3_2_1 or '철학' in ans_3_2_1 or '반면' in ans_3_2_2:
-            st.success("✔️ [서·논술형 2] 정답! 분석과 대조의 설명 방법 구조를 잘 구현했습니다.")
-            score3 += 2
-        else:
-            st.error("❌ [서·논술형 2] 감점: 인간 예술의 다각적 요소(분석)와 AI와의 차이점(대조)이 녹아나야 합니다. [cite: 114, 115]")
-
-        if ('인간' in ans_3_3_v or '선수' in ans_3_3_v) and ('음악' in ans_3_3_a or '환호' in ans_3_3_a):
-            st.success("✔️ [서·논술형 3] 정답! 인간 예술의 본질적인 따뜻함과 감동을 효과적으로 나타냈습니다.")
-            score3 += 2
-        else:
-            st.error("❌ [서·논술형 3] 감점: 로봇의 차가운 기계음과 선명한 대조를 이룰 수 있는 인간미 있는 사운드와 역동적 연출이 필요합니다. [cite: 145]")
-
-        if score3 >= 5:
-            st.session_state.resolved[3] = True
-            st.balloons()
+            if score == 6:
+                st.session_state.resolved[3] = True
+                st.balloons()
 
 # ==============================================================================
-# [탭 4] 복습할 내용 (학습 가이드 요약본)
+# [문제 4] 복습할 내용
 # ==============================================================================
 with tab4:
-    st.markdown("### 📚 대단원 핵심 개념 및 학습 가이드 요약")
-    st.markdown("서논술형 평가에서 높은 점수를 받기 위해 반드시 숙지해야 할 핵심 설명 방법 개념 요약표입니다. [cite: 3]")
+    st.markdown("### 📚 대단원 핵심 개념 및 서논술형 가이드")
+    st.write("감점 없는 완벽한 서·논술형 답안 작성을 위해 아래 요약표를 꼭 기억해 주세요.")
     
-    # 핵심 개념 테이블 시각화
     st.table([
-        {"설명 방법": "정의", "주요 특징": "대상의 뜻, 개념, 본질을 밝힐 때 주로 사용 [cite: 4]"},
-        {"설명 방법": "예시", "주요 특징": "구체적인 사례를 바탕으로 이해를 도울 때 사용 [cite: 4]"},
-        {"설명 방법": "분석", "주요 특징": "대상을 구성하는 여러 요소나 부분으로 나누어 설명할 때 사용 [cite: 4]"},
-        {"설명 방법": "비교와 대조", "주요 특징": "둘 이상의 대상 간의 공통점과 차이점을 선명하게 드러낼 때 사용 [cite: 4]"},
-        {"설명 방법": "분류와 구분", "주요 특징": "일정한 기준에 따라 종류를 묶거나 나눌 때 사용 [cite: 4]"}
+        {"설명 방법": "정의", "핵심 내용": "대상의 본질이나 개념을 명확하게 규정하여 설명함"},
+        {"설명 방법": "예시", "핵심 내용": "구체적이고 친숙한 사례를 들어 독자의 이해를 도움"},
+        {"설명 방법": "분석", "핵심 내용": "하나의 대상을 구성 요소나 부분으로 쪼개어 설명함"},
+        {"설명 방법": "비교와 대조", "핵심 내용": "두 대상 간의 공통점(비교)과 차이점(대조)을 부각함"}
     ])
     
     st.markdown("""
-    > 💡 **서논술형 감점 예방 Tip!**
-    > 1. 문제 조건에서 **'윗글의 내용을 근거로'** 하라고 요구하는 경우, 자신만의 임의적인 상식이나 느낌을 적으면 점수를 받을 수 없습니다. [cite: 34]
-    > 2. 영상 기획안과 같은 **복합양식성** 문항은 시각 요소와 청각 요소가 글의 주제를 전달하는 데 유기적으로 어울려야 합니다. [cite: 9, 54]
+    > 💡 **감점 예방 마지막 점검!**
+    > - **조건 지키기:** '학자를 고를 것', '비유를 활용할 것' 등 문제에서 지정한 제한 조건을 빼놓으면 내용이 좋아도 감점됩니다.
+    > - **오개념 섞지 않기:** 개념 간의 특징을 명확히 분리하여 엉뚱한 성격(예: 정전기 설명에 흐르는 물의 성격 기술)을 덧붙이지 않도록 주의하세요.
     """)
