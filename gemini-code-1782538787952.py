@@ -79,27 +79,33 @@ st.markdown("""
 st.markdown('<div class="main-title">✏️ [국어] 서·논술형 답안 작성 연습</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">작성한 답안을 입력한 뒤 문제의 조건에 맞게 작성하였는지의 여부를 확인하세요. 수업시간에 배운 내용을 복습할 때 마음이 막막할까봐 만든 자료이므로, 참고로만 활용하세요. 선생님과 수업 시간에 공부한 내용이 답안 작성의 초점이에요 😉</div>', unsafe_allow_html=True)
 
-# 세션 상태 초기화 (각 문제별 통과 여부 및 오답 정보 트래킹)
+# 세션 상태 및 '리셋 횟수(Key 변형용)' 초기화
 if "resolved" not in st.session_state:
     st.session_state.resolved = {1: False, 2: False, 3: False}
 if "wrong_details" not in st.session_state:
     st.session_state.wrong_details = {1: [], 2: [], 3: []}
+if "reset_count" not in st.session_state:
+    st.session_state.reset_count = 0
 
 # 진행 상황바 및 상단 UI 배치
 resolved_count = sum(st.session_state.resolved.values())
 st.write(f"✅ **완료된 대문항: {resolved_count} / 3**")
 st.progress(resolved_count / 3)
 
-# 처음부터 다시 풀기 버튼
+# 🔄 처음부터 다시 풀기 버튼 (누르면 reset_count를 1 올려서 모든 입력란의 고유 key를 바꿈 -> 완전 초기화)
 if st.button("🔄 처음부터 다시 풀기", type="secondary"):
     st.session_state.resolved = {1: False, 2: False, 3: False}
     st.session_state.wrong_details = {1: [], 2: [], 3: []}
+    st.session_state.reset_count += 1
     st.rerun()
 
 st.markdown("---")
 
 def normalize(text):
     return re.sub(r'\s+', '', text).strip()
+
+# 고유 Key 생성을 위한 접미사 설정
+r_id = f"_r{st.session_state.reset_count}"
 
 # 문제 탭 레이아웃 설정
 tab1, tab2, tab3, tab4 = st.tabs(["문제 1", "문제 2", "문제 3", "📚 복습할 내용"])
@@ -118,11 +124,10 @@ with tab1:
         <b>기자</b>: 음, 그냥 집에서 편하게 혼자 하는 게 집중이 잘되지 않을까요?<br>
         <b>전문가</b>: 그렇지 않습니다. 오히려 집에서 혼자 하는 것보다는 커피숍이나 도서관에서 하는 것이 더 효율적일 수 있습니다. 평소 친숙하고 좋아하는 과목이라면 공부 모임을 만들어서 다른 사람들과 함께 공부하는 것도 좋은 방법이죠.<br>
         <b>기자</b>: 그렇다면 어렵고 복잡한 과제를 할 때는 어떻게 해야 하나요?<br>
-        <b>전문가</b>: 그럴 때는 반대입니다. 지나치게 어렵거나 도전이 필요한 과제는 충분히 연습하며 익숙해질 때까지 차분하게 혼자 집중하는 시간을 가지는 것이 좋습니다.
+        <b>전문가</b>: 그럴 때는 반대입니다. 지나치지 어렵거나 도전이 필요한 과제는 충분히 연습하며 익숙해질 때까지 차분하게 혼자 집중하는 시간을 가지는 것이 좋습니다.
     </div>
     """, unsafe_allow_html=True)
     
-    # [서·논술형 1] 원본 표 완벽 복원
     st.markdown('<p class="question-text">[서·논술형 1] 윗글을 요약하여 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
@@ -145,11 +150,10 @@ with tab1:
     """, unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
-    ans_1_1 = c1.text_input("(1) ㄱ (과제의 특성):", key="1_1")
-    ans_1_2 = c2.text_input("(2) ㄴ (환경 및 방법):", key="1_2")
-    ans_1_3 = c3.text_input("(3) ㄷ (심리 현상):", key="1_3")
+    ans_1_1 = c1.text_input("(1) ㄱ (과제의 특성):", key=f"1_1{r_id}")
+    ans_1_2 = c2.text_input("(2) ㄴ (환경 및 방법):", key=f"1_2{r_id}")
+    ans_1_3 = c3.text_input("(3) ㄷ (심리 현상):", key=f"1_3{r_id}")
     
-    # [서·논술형 2]
     st.markdown('<p class="question-text">[서·논술형 2] 윗글을 활용하여 \'과제 난이도에 따른 효율적인 학습 전략\'에 대한 설명문을 작성하려 한다. 주어진 첫 문장에 이어지는 내용을 &lt;조건&gt;에 맞추어 작성하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
@@ -167,10 +171,9 @@ with tab1:
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    c_ans1 = st.text_input("(1)", key="2_1")
-    c_ans2 = st.text_input("(2)", key="2_2")
+    c_ans1 = st.text_input("(1)", key=f"2_1{r_id}")
+    c_ans2 = st.text_input("(2)", key=f"2_2{r_id}")
     
-    # [서·논술형 3]
     st.markdown('<p class="question-text">[서·논술형 3] 윗글을 바탕으로 \'상황에 맞는 학습 공간 선택법\'을 설명하는 영상을 제작하려 한다. 다음 기획안을 보고 물음에 답하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
@@ -196,14 +199,13 @@ with tab1:
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_3_v = st.text_input("(1) 시각 요소(Ⓐ):", key="3_1")
-    ans_3_v_eff = st.text_input("시각 요소(Ⓐ)의 효과:", key="3_1_eff")
-    ans_3_a = st.text_input("(2) 청각 요소(Ⓑ):", key="3_2")
-    ans_3_a_eff = st.text_input("청각 요소(Ⓑ)의 효과:", key="3_2_eff")
+    ans_3_v = st.text_input("(1) 시각 요소(Ⓐ):", key=f"3_1{r_id}")
+    ans_3_v_eff = st.text_input("시각 요소(Ⓐ)의 효과:", key=f"3_1_eff{r_id}")
+    ans_3_a = st.text_input("(2) 청각 요소(Ⓑ):", key=f"3_2{r_id}")
+    ans_3_a_eff = st.text_input("청각 요소(Ⓑ)의 효과:", key=f"3_2_eff{r_id}")
 
     if st.button("제출하기", type="primary", key="btn_1"):
         errors = []
-        
         if not (('어려' in ans_1_1 or '복잡' in ans_1_1 or '도전' in ans_1_1) and '과제' in ans_1_1):
             errors.append({"문항": "[서·논술형 1] (1) ㄱ", "포인트": "과제의 특성 요약 (지나치게 어렵거나 도전이 필요한 과제)", "부족": "지문에서 대조되는 어려운 과제의 특성 원형 요약이 누락되었습니다."})
         if not ('혼자' in ans_1_2 and ('집중' in ans_1_2 or '차분' in ans_1_2)):
@@ -227,7 +229,7 @@ with tab1:
             st.balloons()
         else:
             st.session_state.resolved[1] = False
-            st.error(f"❌ 감점 혹은 조건 미충족 사항이 발견되었습니다. 아래 모범답안이나 '📚 복습할 내용' 탭을 확인해 보세요.")
+            st.error(f"❌ 감점 혹은 조건 미충족 사항이 발견되었습니다.")
 
     with st.expander("📖 문제 1 모범답안 보기"):
         st.markdown("""
@@ -257,7 +259,6 @@ with tab2:
     </div>
     """, unsafe_allow_html=True)
     
-    # [서·논술형 1] 원본 표 완벽 복원
     st.markdown('<p class="question-text">[서·논술형 1] 윗글을 요약하여 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
@@ -283,11 +284,10 @@ with tab2:
     """, unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
-    ans_2_1_1 = c1.text_input("(1) ㄱ (물의 상태 비유):", key="2_1_1")
-    ans_2_1_2 = c2.text_input("(2) ㄴ (전하의 상태):", key="2_1_2")
-    ans_2_1_3 = c3.text_input("(3) ㄷ (위험성 여부):", key="2_1_3")
+    ans_2_1_1 = c1.text_input("(1) ㄱ (물의 상태 비유):", key=f"2_1_1{r_id}")
+    ans_2_1_2 = c2.text_input("(2) ㄴ (전하의 상태):", key=f"2_1_2{r_id}")
+    ans_2_1_3 = c3.text_input("(3) ㄷ (위험성 여부):", key=f"2_1_3{r_id}")
 
-    # [서·논술형 2]
     st.markdown('<p class="question-text">[서·논술형 2] 윗글을 활용하여 \'정전기의 특징\'에 대한 설명문을 작성하려 한다. 주어진 첫 문장에 이어지는 내용을 &lt;조건&gt;에 맞추어 작성하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
@@ -305,10 +305,9 @@ with tab2:
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_2_2_1 = st.text_input("(1)", key="2_2_1")
-    ans_2_2_2 = st.text_input("(2)", key="2_2_2")
+    ans_2_2_1 = st.text_input("(1)", key=f"2_2_1{r_id}")
+    ans_2_2_2 = st.text_input("(2)", key=f"2_2_2{r_id}")
 
-    # [서·논술형 3]
     st.markdown('<p class="question-text">[서·논술형 3] 윗글을 바탕으로 \'정전기의 특징\'을 설명하는 영상을 제작하려 한다. 다음 기획안을 보고 물음에 답하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
@@ -334,14 +333,13 @@ with tab2:
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_2_3_v = st.text_input("(1) 시각 요소(Ⓐ):", key="2_3_v")
-    ans_2_3_v_eff = st.text_input("시각 요소(Ⓐ)의 효과:", key="2_3_v_eff")
-    ans_2_3_a = st.text_input("(2) 청각 요소(Ⓑ):", key="2_3_a")
-    ans_2_3_a_eff = st.text_input("청각 요소(Ⓑ)의 효과:", key="2_3_a_eff")
+    ans_2_3_v = st.text_input("(1) 시각 요소(Ⓐ):", key=f"2_3_v{r_id}")
+    ans_2_3_v_eff = st.text_input("시각 요소(Ⓐ)의 효과:", key=f"2_3_v_eff{r_id}")
+    ans_2_3_a = st.text_input("(2) 청각 요소(Ⓑ):", key=f"2_3_a{r_id}")
+    ans_2_3_a_eff = st.text_input("청각 요소(Ⓑ)의 효과:", key=f"2_3_a_eff{r_id}")
 
     if st.button("제출하기", type="primary", key="btn_2"):
         errors = []
-        
         if not ('고여' in ans_2_1_1 or '갇혀' in ans_2_1_1):
             errors.append({"문항": "[서·논술형 1] (1) ㄱ", "포인트": "비유법 이해 (높은 곳에 고여 있는 물)", "부족": "실생활 전하와 대조되는 정전기 고유의 비유 표현인 '높은 곳에 고여 있는 물'이 기술되지 않았습니다."})
         if not ('이동하지' in ans_2_1_2 or '머물' in ans_2_1_2 or '정지' in ans_2_1_2) or '흐르는' in ans_2_1_2:
@@ -365,7 +363,7 @@ with tab2:
             st.balloons()
         else:
             st.session_state.resolved[2] = False
-            st.error(f"❌ 감점 혹은 조건 미충족 사항이 발견되었습니다. 아래 모범답안이나 '📚 복습할 내용' 탭을 확인해 보세요.")
+            st.error(f"❌ 감점 혹은 조건 미충족 사항이 발견되었습니다.")
 
     with st.expander("📖 문제 2 모범답안 보기"):
         st.markdown("""
@@ -396,7 +394,6 @@ with tab3:
     </div>
     """, unsafe_allow_html=True)
     
-    # [서·논술형 1] 원본 표 완벽 복원
     st.markdown('<p class="question-text">[서·논술형 1] 윗글을 요약하여 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
@@ -422,11 +419,10 @@ with tab3:
     """, unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
-    ans_3_1_1 = c1.text_input("(1) ㄱ (올림픽 경기 비유):", key="3_1_1")
-    ans_3_1_2 = c2.text_input("(2) ㄴ (예술 가능 여부 및 근거):", key="3_1_2")
-    ans_3_1_3 = c3.text_input("(3) ㄷ (예술로서의 가치):", key="3_1_3")
+    ans_3_1_1 = c1.text_input("(1) ㄱ (올림픽 경기 비유):", key=f"3_1_1{r_id}")
+    ans_3_1_2 = c2.text_input("(2) ㄴ (예술 가능 여부 및 근거):", key=f"3_1_2{r_id}")
+    ans_3_1_3 = c3.text_input("(3) ㄷ (예술로서의 가치):", key=f"3_1_3{r_id}")
 
-    # [서·논술형 2]
     st.markdown('<p class="question-text">[서·논술형 2] 윗글을 활용하여 \'인공 지능이 그린 그림을 바라보는 시각\'에 대한 설명문을 작성하려 한다. 주어진 첫 문장에 이어지는 내용을 &lt;조건&gt;에 맞추어 작성하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
@@ -444,10 +440,9 @@ with tab3:
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_3_2_1 = st.text_input("(1)", key="3_2_1")
-    ans_3_2_2 = st.text_input("(2)", key="3_2_2")
+    ans_3_2_1 = st.text_input("(1)", key=f"3_2_1{r_id}")
+    ans_3_2_2 = st.text_input("(2)", key=f"3_2_2{r_id}")
 
-    # [서·논술형 3]
     st.markdown('<p class="question-text">[서·논술형 3] 윗글을 바탕으로 \'인공 지능이 그린 그림을 바라보는 시각\'을 설명하는 영상을 제작하려 한다. 다음 기획안을 보고 물음에 답하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
@@ -473,14 +468,13 @@ with tab3:
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_3_3_v = st.text_input("(1) 시각 요소(Ⓐ):", key="3_3_v")
-    ans_3_3_v_eff = st.text_input("시각 요소(Ⓐ)의 효과:", key="3_3_v_eff")
-    ans_3_3_a = st.text_input("(2) 청각 요소(Ⓑ):", key="3_3_a")
-    ans_3_3_a_eff = st.text_input("청각 요소(Ⓑ)의 효과:", key="3_3_a_eff")
+    ans_3_3_v = st.text_input("(1) 시각 요소(Ⓐ):", key=f"3_3_v{r_id}")
+    ans_3_3_v_eff = st.text_input("시각 요소(Ⓐ)의 효과:", key=f"3_3_v_eff{r_id}")
+    ans_3_3_a = st.text_input("(2) 청각 요소(Ⓑ):", key=f"3_3_a{r_id}")
+    ans_3_3_a_eff = st.text_input("청각 요소(Ⓑ)의 효과:", key=f"3_3_a_eff{r_id}")
 
     if st.button("제출하기", type="primary", key="btn_3"):
         errors = []
-        
         if not ('로봇' in ans_3_1_1 and '피겨' in ans_3_1_1):
             errors.append({"문항": "[서·논술형 1] (1) ㄱ", "포인트": "비유적 대응 유추 (로봇이 실수 없이 완벽하게 해내는 피겨 스케이팅)", "부족": "지문 속에서 인공지능에 일치시켜 비유한 대상인 '로봇의 피겨 스케이팅' 내용이 유실되었습니다."})
         if not (('아니다' in ans_3_1_2 or '어렵다' in ans_3_1_2) and ('감정' in ans_3_1_2 or '철학' in ans_3_1_2 or '이야기' in ans_3_1_2)):
@@ -500,11 +494,11 @@ with tab3:
         st.markdown("#### 🎯 채점 결과 리포트")
         if not errors:
             st.session_state.resolved[3] = True
-            st.success("🎉 모든 조건을 완벽하게 충족하셨습니다! 대단원 학습이 완료되었습니다.")
+            st.success("🎉 모든 조건을 완벽하게 충족하셨습니다!")
             st.balloons()
         else:
             st.session_state.resolved[3] = False
-            st.error(f"❌ 감점 혹은 조건 미충족 사항이 발견되었습니다. 아래 모범답안이나 '📚 복습할 내용' 탭을 확인해 보세요.")
+            st.error(f"❌ 감점 혹은 조건 미충족 사항이 발견되었습니다.")
 
     with st.expander("📖 문제 3 모범답안 보기"):
         st.markdown("""
@@ -518,12 +512,10 @@ with tab3:
         """)
 
 # ==============================================================================
-# [📚 복습할 내용] - 동적 조건 불충족 문제 피드백 바인딩
+# [📚 복습할 내용]
 # ==============================================================================
 with tab4:
     st.markdown("### 📚 오답 노트 및 맞춤형 조건 피드백")
-    
-    # 세션에 기록된 에러(오답) 총합 산출
     total_errors = sum(len(st.session_state.wrong_details[i]) for i in [1, 2, 3])
     
     if total_errors == 0:
@@ -534,6 +526,10 @@ with tab4:
         for q_num in [1, 2, 3]:
             if st.session_state.wrong_details[q_num]:
                 st.markdown(f"#### 🔍 [문제 {q_num}]번 세부 미흡 사항 안내")
+                for detail in st.session_state.wrong_details[q_num]:
+                    with st.expander(f"📌 {detail['문항']} 보기 조건 피드백", expanded=True):
+                        st.markdown(f"**💡 해당 개념 핵심 복습 포인트:**\n> {detail['포인트']}")
+                        st.markdown(f"**❌ 내 답안의 부족한 부분:**\n> <span style='color:#E74C3C; font-weight:600;'>{detail['부족']}</span>", unsafe_allow_html=True)
                 for detail in st.session_state.wrong_details[q_num]:
                     with st.expander(f"📌 {detail['문항']} 보기 조건 피드백", expanded=True):
                         st.markdown(f"**💡 해당 개념 핵심 복습 포인트:**\n> {detail['포인트']}")
