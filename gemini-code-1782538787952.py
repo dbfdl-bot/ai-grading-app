@@ -4,12 +4,11 @@ import re
 # 페이지 기본 설정 및 스타일 정의
 st.set_page_config(page_title="국어 서논술형 답안 작성 연습", layout="wide", page_icon="✏️")
 
-# 커스텀 CSS: image_5630fe.png 스타일 및 밀착 배치 레이아웃 재현
+# 커스텀 CSS: 발문-입력란 밀착 배치 및 표 스타일 재현
 st.markdown("""
     <style>
-    /* 제목 및 본문 스타일 */
     .main-title {
-        font-size: 2.3rem !important;
+        font-size: 2.2rem !important;
         font-weight: 800 !important;
         color: #2C3E50;
         margin-bottom: 0.5rem;
@@ -19,24 +18,6 @@ st.markdown("""
         font-size: 1.05rem;
         line-height: 1.6;
         margin-bottom: 1.8rem;
-    }
-    
-    /* 탭 스타일 조정 */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 4px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        background-color: #F8F9FA;
-        border: 1px solid #E9ECEF;
-        border-radius: 4px 4px 0px 0px;
-        padding: 8px 16px;
-        font-weight: 600;
-        color: #495057;
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: #FFF !important;
-        border-top: 3px solid #E74C3C !important;
-        color: #E74C3C !important;
     }
     
     /* 지문 박스 스타일 */
@@ -55,13 +36,13 @@ st.markdown("""
         color: #0056B3;
     }
 
-    /* 표 서식 공통 스타일 (보기 / 조건) */
+    /* 원본 <보기>, <조건> 표 서식 */
     .info-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 10px;
-        margin-bottom: 15px;
-        font-size: 1rem;
+        margin-top: 8px;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
     }
     .info-table th {
         background-color: #F1F3F5;
@@ -70,27 +51,26 @@ st.markdown("""
         padding: 10px;
         font-weight: bold;
         text-align: center;
-        width: 15%;
+        width: 12%;
     }
     .info-table td {
         border: 1px solid #DEE2E6;
         padding: 12px;
         line-height: 1.6;
         background-color: #FFFFFF;
+        color: #212529;
     }
     
-    /* 발문 스타일 - 입력창과 밀착시키기 위해 하단 마진 제거 */
+    /* 발문과 입력란 밀착 레이아웃 (마진 최소화) */
     .question-text {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         font-weight: 600;
         color: #212529;
-        margin-top: 15px;
+        margin-top: 12px !important;
         margin-bottom: 2px !important; 
     }
-    
-    /* 스크립트 내 수직 간격 최소화 */
-    .block-container {
-        padding-top: 2rem !important;
+    div[data-testid="stFormSubmitButton"] {
+        margin-top: 10px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -143,93 +123,121 @@ with tab1:
     """, unsafe_allow_html=True)
     
     # [서·논술형 1]
-    st.markdown('<p class="question-text">[서·논술형 1] 윗글을 요약하여 &lt;보기&gt;의 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">[서·논술형 1] 윗글을 요약하여 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
         <tr>
-            <th>&lt;보기&gt;</th>
-            <td>
-                • 과제의 특성: 비교적 쉬운 취미 생활이나 과제 ➔ 효율적인 환경 및 방법: 커피숍, 도서관, 공부 모임 ➔ 관련 심리 현상: 사회적 촉진<br>
-                • 과제의 특성: <b>[  ㄱ  ]</b> ➔ 효율적인 환경 및 방법: <b>[  ㄴ  ]</b> ➔ 관련 심리 현상: <b>[  ㄷ  ]</b>
-            </td>
+            <th>과제의 특성</th>
+            <td>비교적 쉬운 취미 생활이나 과제</td>
+            <td>지나치게 어렵거나 도전이 필요한 과제</td>
+        </tr>
+        <tr>
+            <th>효율적인 환경 및 방법</th>
+            <td>커피숍, 도서관 등에서 하거나 모임을 만들어 다른 사람들과 함께 함</td>
+            <td><b>[  ㄴ  ]</b></td>
+        </tr>
+        <tr>
+            <th>관련된 심리 현상</th>
+            <td>사회적 촉진</td>
+            <td><b>[  ㄷ  ]</b></td>
         </tr>
     </table>
     """, unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
-    ans_1_1 = c1.text_input("(1) ㄱ :", key="1_1")
-    ans_1_2 = c2.text_input("(2) ㄴ :", key="1_2")
-    ans_1_3 = c3.text_input("(3) ㄷ :", key="1_3")
+    ans_1_1 = c1.text_input("(1) ㄱ (과제의 특성 빈칸):", key="1_1")
+    ans_1_2 = c2.text_input("(2) ㄴ:", key="1_2")
+    ans_1_3 = c3.text_input("(3) ㄷ:", key="1_3")
     
     # [서·논술형 2]
-    st.markdown('<p class="question-text">[서·논술형 2] 윗글을 활용하여 \'과제 난이도에 따른 효율적인 학습 전략\'에 대한 설명문을 작성하려 한다. 주어진 첫 문장에 이어지는 내용을 완성하시오.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">[서·논술형 2] 윗글을 활용하여 \'과제 난이도에 따른 효율적인 학습 전략\'에 대한 설명문을 작성하려 한다. 주어진 첫 문장에 이어지는 내용을 &lt;조건&gt;에 맞추어 작성하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
         <tr>
-            <th>주어진 첫 문장</th>
+            <th>주어진 문장</th>
             <td>과제의 특성과 난이도에 따라 우리의 학습 효율을 높이는 방법은 다르게 적용되어야 한다.</td>
         </tr>
         <tr>
             <th>&lt;조건&gt;</th>
             <td>
-                1. 서로 다른 2가지의 설명 방법을 사용하여 이어지는 문장을 (1), (2)에 각각 하나씩 작성할 것.<br>
-                2. 윗글에 제시된 내용만을 활용하여 문장을 구성할 것.<br>
-                3. 각 문장의 끝에 자신이 사용한 설명 방법의 명칭을 괄호에 넣어 표기할 것. (예: (예시), (대조))
+                ○ 서로 다른 2가지의 설명 방법을 사용하여, 주어진 문장에 이어지는 문장을 (1), (2)에 각각 하나씩 작성할 것.<br>
+                ○ 윗글에 제시된 내용만을 활용하여 문장을 구성할 것. (지문에 없는 외부 배경지식을 활용할 경우 인정하지 않음.)<br>
+                ○ 각 문장의 끝에 자신이 사용한 설명 방법의 명칭을 괄호에 넣어 표기할 것. (예: (예시), (대조))
             </td>
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    c_ans1 = st.text_input("(1) :", key="2_1")
-    c_ans2 = st.text_input("(2) :", key="2_2")
+    c_ans1 = st.text_input("(1)", key="2_1")
+    c_ans2 = st.text_input("(2)", key="2_2")
     
     # [서·논술형 3]
-    st.markdown('<p class="question-text">[서·논술형 3] 윗글을 바탕으로 \'상황에 맞는 학습 공간 선택법\'을 설명하는 영상을 제작할 때, 어려운 과제를 할 때의 [장면 2] 기획안을 완성하시오.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">[서·논술형 3] 윗글을 바탕으로 \'상황에 맞는 학습 공간 선택법\'을 설명하는 영상을 제작하려 한다. 다음 기획안을 보고 물음에 답하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
         <tr>
+            <th>[영상 기획안]</th>
+            <td>
+                ○ 주제: 사회적 촉진과 억제를 활용한 스마트한 공부법<br>
+                ○ 세부 내용 계획<br>
+                &nbsp;&nbsp;[장면 1] 쉬운 과제를 할 때<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 시각 요소: 백색소음이 있는 밝은 도서관에서 친구들과 가볍게 미소 지으며 공부하는 학생들의 모습을 넓은 화면(풀샷)으로 보여줌.<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 청각 요소: 경쾌하고 리듬감 있는 배경음악과 함께 사람들의 가벼운 발소리와 책장 넘기는 소리를 깔아줌<br>
+                &nbsp;&nbsp;[장면 2] 어려운 과제를 할 때<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 시각 요소: <b>Ⓐ ( &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; )</b><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 청각 요소: <b>Ⓑ ( &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; )</b>
+            </td>
+        </tr>
+        <tr>
             <th>&lt;조건&gt;</th>
             <td>
-                1. 어려운 과제를 할 때 필요한 환경의 특성이 드러나도록 시각 요소(Ⓐ)와 청각 요소(Ⓑ) 연출 계획을 세울 것.<br>
-                2. 자신이 설정한 시각 요소와 청각 요소가 글의 내용을 전달하는 데 어떤 효과가 있는지 글의 내용을 근거로 각각 서술할 것.
+                ○ 윗글을 참고하여 어려운 과제를 할 때 필요한 환경의 특성이 잘 드러나도록 Ⓐ와 Ⓑ에 들어갈 연출 계획을 세울 것.<br>
+                ○ 자신이 설정한 시각/청각 요소가 글의 내용을 전달하는 데 어떤 효과가 있는지 각각 서술할 것.
             </td>
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_3_v = st.text_area("(1) 시각 요소(Ⓐ) 및 효과 :", key="3_1", height=80)
-    ans_3_a = st.text_area("(2) 청각 요소(Ⓑ) 및 효과 :", key="3_2", height=80)
+    ans_3_v = st.text_input("(1) 시각 요소(Ⓐ):", key="3_1")
+    ans_3_v_eff = st.text_input("시각 요소(Ⓐ)의 효과:", key="3_1_eff")
+    ans_3_a = st.text_input("(2) 청각 요소(Ⓑ):", key="3_2")
+    ans_3_a_eff = st.text_input("청각 요소(Ⓑ)의 효과:", key="3_2_eff")
 
-    if st.button("문제 1 채점하기", type="primary", key="btn_1"):
+    if st.button("제출하기", type="primary", key="btn_1"):
         errors = []
         
-        # 1-1 채점
-        if not (('쉬운' in ans_1_1 or '낮은' in ans_1_1 or '어려운' in ans_1_1 or '복잡한' in ans_1_1) and '과제' in ans_1_1):
-            errors.append({"문항": "[서·논술형 1] (1) ㄱ", "포인트": "핵심어휘(과제/난이도) 추출 및 대조적 관계 이해", "부족": "지문에서 대조되는 과제의 핵심 특성(어렵고 복잡한 과제 등)이 누락되었거나 명확하지 않습니다."})
-        # 1-2 채점
+        if not (('어려' in ans_1_1 or '복잡' in ans_1_1 or '도전' in ans_1_1) and '과제' in ans_1_1):
+            errors.append({"문항": "[서·논술형 1] (1) ㄱ", "포인트": "과제의 특성 분석 (어렵고 복잡한 과제)", "부족": "지문에서 대조되는 어려운 과제의 특성 요약이 누락되었거나 불분명합니다."})
         if not ('혼자' in ans_1_2 and ('집중' in ans_1_2 or '차분' in ans_1_2)):
-            errors.append({"문항": "[서·논술형 1] (2) ㄴ", "포인트": "지문 근거에 기반한 명확한 해결 환경 도출", "부족": "어려운 과제를 해결하기 위해 필요한 환경인 '차분하게 혼자 집중하는 공간/시간'의 의미가 부족합니다."})
-        # 1-3 채점
+            errors.append({"문항": "[서·논술형 1] (2) ㄴ", "포인트": "효율적인 환경 도출 (차분하게 혼자 집중하는 시간)", "부족": "어려운 과제를 해결하는 방법으로 '혼자 차분하게 집중'한다는 핵심 지문 근거가 빠져 있습니다."})
         if normalize(ans_1_3) != "사회적억제":
-            errors.append({"문항": "[서·논술형 1] (3) ㄷ", "포인트": "핵심 심리학 용어 원형 매칭", "부족": "사회적 촉진과 정확히 대비되는 정식 학술 용어인 '사회적 억제'를 올바르게 작성해야 합니다."})
+            errors.append({"문항": "[서·논술형 1] (3) ㄷ", "포인트": "심리학 용어 개념 매칭 (사회적 억제)", "부족": "사회적 촉진과 정확히 구별되는 개념 용어인 '사회적 억제' 원형이 올바르게 적히지 않았습니다."})
             
-        # 2번 채점
         m1 = re.search(r'\(([^)]+)\)', c_ans1)
         m2 = re.search(r'\(([^)]+)\)', c_ans2)
         if not (m1 and m2):
-            errors.append({"문항": "[서·논술형 2]", "포인트": "설명 방법 활용 및 문장 끝 괄호 표기 조건 준수", "부족": "각 문장 끝에 활용한 설명 방법의 명칭을 명시하는 규칙(예: (예시), (대조))을 충족하지 못했습니다."})
+            errors.append({"문항": "[서·논술형 2]", "포인트": "설명 방법 조건 사용 및 문장 끝 괄호 표기 요건 준수", "부족": "각 문장 끝 괄호 안에 활용한 설명 방법의 명칭을 명시하는 규칙(예: (예시), (대조))을 충족하지 못했습니다."})
             
-        # 3번 채점
-        if not (('혼자' in ans_3_v or '독립' in ans_3_v) and ('조용' in ans_3_a or '소음' in ans_3_a) and ('효과' in ans_3_v and '효과' in ans_3_a)):
-            errors.append({"문항": "[서·논술형 3]", "포인트": "매체 복합양식성(시청각) 연출 기획 및 지문 연계 효과 도출", "부족": "어려운 과제 상황에 알맞은 시각/청각 연출 계획과, 그것이 유발하는 실제 지문 속 효과(집중, 익숙함 등)에 대한 인과적 설명이 미흡합니다."})
+        if not (('혼자' in ans_3_v or '독립' in ans_3_v or '방' in ans_3_v) and ('조용' in ans_3_a or '소음' in ans_3_a or '고요' in ans_3_a) and len(ans_3_v_eff) > 5 and len(ans_3_a_eff) > 5):
+            errors.append({"문항": "[서·논술형 3]", "포인트": "매체 복합양식성 고려 및 지문 연계 효과 기술", "부족": "어려운 과제에 알맞은 시청각 요소(독방, 조용함 등)와 그것이 내용을 전달하는 인과적 효과 기술이 부족합니다."})
 
         st.session_state.wrong_details[1] = errors
         st.markdown("#### 🎯 채점 결과 리포트")
         if not errors:
             st.session_state.resolved[1] = True
-            st.success("🎉 모든 조건을 완벽하게 충족하셨습니다! 다음 문제로 넘어가세요.")
+            st.success("🎉 모든 조건을 완벽하게 충족하셨습니다!")
             st.balloons()
         else:
             st.session_state.resolved[1] = False
-            st.error(f"❌ {len(errors)}개의 문항에서 조건 미충족 혹은 오답이 발견되었습니다. '📚 복습할 내용' 탭을 확인해 보세요.")
+            st.error(f"❌ 감점 혹은 조건 미충족 사항이 발견되었습니다. 아래 모범답안이나 '📚 복습할 내용' 탭을 확인해 보세요.")
+
+    with st.expander("📖 문제 1 모범답안 보기"):
+        st.markdown("""
+        - **[서·논술형 1]** (1) 지나치게 어렵거나 도전이 필요한 과제 / (2) 차분하게 혼자 집중하는 시간을 가짐 / (3) 사회적 억제
+        - **[서·논술형 2]** - (1) 예를 들어 비교적 쉬운 과제나 취미생활은 커피숍이나 도서관에서 남들과 함께 할 때 효율이 오른다. **(예시)**
+          - (2) 반면 지나치게 어렵거나 도전이 필요한 과제는 다른 사람과 함께하는 대신 차분히 혼자 집중해야 한다. **(대조)**
+        - **[서·논술형 3]**
+          - (1) 시각 요소(Ⓐ): 혼자만 있는 차분하고 독립된 공부방 배경을 클로즈업하여 보여준다. / 효과: 다른 사람의 시선이 차단되어 혼자 집중해야 하는 과제 환경을 명확히 시각화하여 전달한다.
+          - (2) 청각 요소(Ⓑ): 백색소음이나 주변 소리를 모두 없애고 고요한 침묵을 유지한다. / 효과: 지나치게 어려운 문제를 풀 때 소음을 통제함으로써 차분하게 마인드 컨트롤을 할 수 있도록 유도한다.
+        """)
 
 # ==============================================================================
 # [문제 2] 정전기의 특징
@@ -250,15 +258,26 @@ with tab2:
     """, unsafe_allow_html=True)
     
     # [서·논술형 1]
-    st.markdown('<p class="question-text">[서·논술형 1] 윗글을 요약하여 &lt;보기&gt;의 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">[서·논술형 1] 윗글을 요약하여 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
         <tr>
-            <th>&lt;보기&gt;</th>
-            <td>
-                • 실생활에서 쓰는 전기: 물의 상태 비유 ➔ 흐르는 물 | 전하의 상태 ➔ 이동함 | 위험성 ➔ 전압이 높고 전류가 흘러 위험함<br>
-                • 정전기: 물의 상태 비유 ➔ <b>[  ㄱ  ]</b> | 전하의 상태 ➔ <b>[  ㄴ  ]</b> | 위험성 ➔ <b>[  ㄷ  ]</b>
-            </td>
+            <th>대상</th>
+            <th>물의 상태에 비유</th>
+            <th>전하의 상태</th>
+            <th>위험성</th>
+        </tr>
+        <tr>
+            <th>실생활 전기</th>
+            <td>흐르는 물</td>
+            <td>전하가 이동함</td>
+            <td>감전 등의 위험이 있음</td>
+        </tr>
+        <tr>
+            <th>정전기</th>
+            <td><b>[  ㄱ  ]</b></td>
+            <td><b>[  ㄴ  ]</b></td>
+            <td><b>[  ㄷ  ]</b></td>
         </tr>
     </table>
     """, unsafe_allow_html=True)
@@ -269,69 +288,95 @@ with tab2:
     ans_2_1_3 = c3.text_input("(3) ㄷ :", key="2_1_3")
 
     # [서·논술형 2]
-    st.markdown('<p class="question-text">[서·논술형 2] 윗글을 활용하여 \'정전기의 특징\'에 대한 설명문을 작성하려 한다. 주어진 첫 문장에 이어지는 내용을 완성하시오.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">[서·논술형 2] 윗글을 활용하여 \'정전기의 특징\'에 대한 설명문을 작성하려 한다. 주어진 첫 문장에 이어지는 내용을 &lt;조건&gt;에 맞추어 작성하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
         <tr>
-            <th>주어진 첫 문장</th>
+            <th>주어진 문장</th>
             <td>겨울철에 흔히 겪는 정전기는 우리가 평소 집에서 사용하는 전기와는 다른 뚜렷한 특징이 있다.</td>
         </tr>
         <tr>
             <th>&lt;조건&gt;</th>
             <td>
-                1. 주어진 문장에 이어지는 문장을 (1), (2)에 각각 하나씩 작성할 것.<br>
-                2. (1)과 (2)에는 서로 다른 설명 방법이 1가지 이상 활용되어야 하며, 각 문장의 끝에 설명 방법의 명칭을 괄호에 넣어 기재할 것.<br>
-                3. 윗글에 제시된 내용만을 활용하고, 두 문장이 논리적 흐름을 갖고 이어지도록 서술할 것.
+                ○ 주어진 문장에 이어지는 문장을 (1), (2)에 각각 하나씩 작성할 것.<br>
+                ○ (1)과 (2)에는 서로 다른 설명 방법이 1가지 이상 활용되어야 하며, 각 문장에 사용된 설명 방법의 명칭을 괄호에 넣어 문장 끝에 기재할 것.<br>
+                ○ 윗글에 제시된 내용만을 활용하고, 두 문장이 논리적 흐름을 갖고 이어지도록 할 것.
             </td>
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_2_2_1 = st.text_input("(1) :", key="2_2_1")
-    ans_2_2_2 = st.text_input("(2) :", key="2_2_2")
+    ans_2_2_1 = st.text_input("(1)", key="2_2_1")
+    ans_2_2_2 = st.text_input("(2)", key="2_2_2")
 
     # [서·논술형 3]
-    st.markdown('<p class="question-text">[서·논술형 3] 윗글을 바탕으로 \'정전기의 특징\'을 설명하는 영상 기획안 중, [장면 2] 정전기(고여 있는 물) 부분을 완성하시오.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">[서·논술형 3] 윗글을 바탕으로 \'정전기의 특징\'을 설명하는 영상을 제작하려 한다. 다음 기획안을 보고 물음에 답하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
         <tr>
+            <th>[영상 기획안]</th>
+            <td>
+                ○ 주제: 전압은 높지만 위험하지 않은 정전기의 비밀<br>
+                ○ 세부 내용 계획<br>
+                &nbsp;&nbsp;[장면 1] 실생활 전기 (흐르는 물)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 시각 요소: 거대한 폭포수가 콸콸 쏟아져 내려오며 물레방아를 힘차게 돌리는 역동적인 그래픽을 보여줌.<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 청각 요소: 물이 거세게 부딪히는 웅장하고 큰 소리를 배경음으로 사용함.<br>
+                &nbsp;&nbsp;[장면 2] 정전기 (고여 있는 물)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 시각 요소: <b>Ⓐ ( &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; )</b><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 청각 요소: <b>Ⓑ ( &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; )</b>
+            </td>
+        </tr>
+        <tr>
             <th>&lt;조건&gt;</th>
             <td>
-                1. 윗글을 바탕으로 정전기의 특성이 잘 드러나도록 시각 요소(A)와 청각 요소(B) 연출 계획을 세울 것.<br>
-                2. 설정한 시각 및 청각 요소의 연출 효과를 각각 서술하되, 반드시 윗글의 내용을 근거로 포함할 것.
+                ○ 윗글을 바탕으로 정전기의 특성이 잘 드러나도록 Ⓐ와 Ⓑ에 들어갈 연출 계획을 세울 것.<br>
+                ○ 설정한 시각 및 청각 요소의 연출 효과를 각각 서술하되, 반드시 윗글의 내용을 근거로 포함할 것.
             </td>
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_2_3_v = st.text_area("(1) 시각 요소(Ⓐ) 및 효과 :", key="2_3_v", height=80)
-    ans_2_3_a = st.text_area("(2) 청각 요소(Ⓑ) 및 효과 :", key="2_3_a", height=80)
+    ans_2_3_v = st.text_input("(1) 시각 요소(Ⓐ):", key="2_3_v")
+    ans_2_3_v_eff = st.text_input("시각 요소(Ⓐ)의 효과:", key="2_3_v_eff")
+    ans_2_3_a = st.text_input("(2) 청각 요소(Ⓑ):", key="2_3_a")
+    ans_2_3_a_eff = st.text_input("청각 요소(Ⓑ)의 효과:", key="2_3_a_eff")
 
-    if st.button("문제 2 채점하기", type="primary", key="btn_2"):
+    if st.button("제출하기", type="primary", key="btn_2"):
         errors = []
         
         if not ('고여' in ans_2_1_1 or '갇혀' in ans_2_1_1):
-            errors.append({"문항": "[서·논술형 1] (1) ㄱ", "포인트": "비유적 표현의 핵심 속성 추출", "부족": "실생활 전기의 '흐르는 물'과 완벽히 대비되는 정전기의 비유적 표현인 '고여 있는 물'이 기술되지 않았습니다."})
+            errors.append({"문항": "[서·논술형 1] (1) ㄱ", "포인트": "비유법 이해 (고여 있는 물)", "부족": "흐르는 물과 대조되는 정전기 고유의 비유 표현인 '고여 있는 물'이 기술되지 않았습니다."})
         if not ('이동하지' in ans_2_1_2 or '머물' in ans_2_1_2 or '정지' in ans_2_1_2) or '흐르는' in ans_2_1_2:
-            errors.append({"문항": "[서·논술형 1] (2) ㄴ", "포인트": "과학적 대상의 상태 기술 및 오개념 배제", "부족": "정전기 한자의 핵심 뜻인 '전하가 이동하지 않고 머물러 있음(정지상태)'의 서술이 불충분하거나 일반 전기의 속성을 혼용했습니다."})
+            errors.append({"문항": "[서·논술형 1] (2) ㄴ", "포인트": "개념 속성 추출 (전하가 이동하지 않고 머물러 있음)", "부족": "한자 '정'의 의미와 연계된 전하의 정지 상태 및 머무름 속성이 누락되었습니다."})
         if not ('위험하지' in ans_2_1_3 or '안전' in ans_2_1_3 or '피해가없' in normalize(ans_2_1_3)):
-            errors.append({"문항": "[서·논술형 1] (3) ㄷ", "포인트": "지문 기반의 명확한 인과 판단 및 결론 도출", "부족": "정전기의 전류 특성에 따른 최종적 위험성 판단 결과인 '위험하지 않음'이 올바르게 나타나지 않았습니다."})
+            errors.append({"문항": "[서·논술형 1] (3) ㄷ", "포인트": "지문 인과 관계 판단 (위험하지 않음)", "부족": "전하가 흐르지 않기 때문에 도출되는 결론인 '위험하지 않음/피해가 없음'이 나타나지 않았습니다."})
             
         m1 = re.search(r'\(([^)]+)\)', ans_2_2_1)
         m2 = re.search(r'\(([^)]+)\)', ans_2_2_2)
         if not (m1 and m2):
-            errors.append({"문항": "[서·논술형 2]", "포인트": "다양한 설명 방법 매칭 및 구조적 일치", "부족": "조건에 규정된 설명 방법의 명칭(예: (정의), (비교))을 문장 끝에 기입하지 않았거나 논리적 연결이 어색합니다."})
+            errors.append({"문항": "[서·논술형 2]", "포인트": "설명 기법 명칭 괄호 표기 일치 여부", "부족": "조건에 규정된 설명 방법 명칭(예: (정의), (비교))을 문장 끝 괄호에 기입하지 않았거나 구조가 부적절합니다."})
             
         if not (('댐' in ans_2_3_v or '호수' in ans_2_3_v or '고여' in ans_2_3_v) and ('고요' in ans_2_3_a or '침묵' in ans_2_3_a)) or '폭포' in ans_2_3_a:
-            errors.append({"문항": "[서·논술형 3]", "포인트": "매체 특성에 맞는 정적 속성 시청각 형상화", "부족": "정전기의 본질인 '고여 있음/정지함'을 구현하기 위한 시청각적 연출 계획 및 지문 근거 서술이 잘못되었거나 흐르는 물의 특성과 혼동했습니다."})
+            errors.append({"문항": "[서·논술형 3]", "포인트": "정적 속성의 시청각적 시각화 및 지문 유기성", "부족": "정전기의 본질인 '고여 있고 움직이지 않음'을 형상화할 시청각 계획 및 효과가 일반 전기(폭포)의 성격과 혼동되었습니다."})
 
         st.session_state.wrong_details[2] = errors
         st.markdown("#### 🎯 채점 결과 리포트")
         if not errors:
             st.session_state.resolved[2] = True
-            st.success("🎉 모든 조건을 완벽하게 충족하셨습니다! 다음 문제로 넘어가세요.")
+            st.success("🎉 모든 조건을 완벽하게 충족하셨습니다!")
             st.balloons()
         else:
             st.session_state.resolved[2] = False
-            st.error(f"❌ {len(errors)}개의 문항에서 조건 미충족 혹은 오답이 발견되었습니다. '📚 복습할 내용' 탭을 확인해 보세요.")
+            st.error(f"❌ 감점 혹은 조건 미충족 사항이 발견되었습니다. 아래 모범답안이나 '📚 복습할 내용' 탭을 확인해 보세요.")
+
+    with st.expander("📖 문제 2 모범답안 보기"):
+        st.markdown("""
+        - **[서·논술형 1]** (1) 높은 곳에 고여 있는 물 / (2) 전하가 이동하지 않고 머물러 있음 / (3) 위험하지 않음 (별 피해가 없음)
+        - **[서·논술형 2]**
+          - (1) 정전기란 전하가 정지 상태로 있어 그 분포가 시간적으로 변화하지 않는 전기를 말한다. **(정의)**
+          - (2) 우리가 쓰는 전기가 흐르는 물이라면 정전기는 높은 곳에 고여 있는 물과 같다. **(비교)**
+        - **[서·논술형 3]**
+          - (1) 시각 요소(Ⓐ): 높은 산정호수나 댐에 가득 차서 잔잔하게 멈추어 있는 맑은 물의 전경을 보여준다. / 효과: 전하가 이동하지 않고 멈추어 가만히 고여 있는 정전기의 상태적 비유를 직관적으로 전달한다.
+          - (2) 청각 요소(Ⓑ): 물 흐르는 소리를 완전히 소거하고 산속의 고요한 새소리나 미풍 소리만 잔잔하게 깔아준다. / 효과: 전하가 흐르지 않아 안전하고 조용한 전기적 상태를 청각적으로 부각한다.
+        """)
 
 # ==============================================================================
 # [문제 3] AI 그림과 예술
@@ -352,15 +397,26 @@ with tab3:
     """, unsafe_allow_html=True)
     
     # [서·논술형 1]
-    st.markdown('<p class="question-text">[서·논술형 1] 윗글을 요약하여 &lt;보기&gt;의 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">[서·논술형 1] 윗글을 요약하여 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
         <tr>
-            <th>&lt;보기&gt;</th>
-            <td>
-                • 인간의 작품: 올림픽 경기 비유 대상 ➔ 선수들의 노력과 열정 | 예술 판단 여부 ➔ 고유한 감정, 경험, 철학 등이 담겨 예술로 봄<br>
-                • 인공지능 작품: 올림픽 경기 비유 대상 ➔ <b>[  ㄱ  ]</b> | 예술 판단 여부 ➔ <b>[  ㄴ  ]</b> | 예술적 가치 여부 ➔ <b>[  ㄷ  ]</b>
-            </td>
+            <th>대상</th>
+            <th>올림픽 경기에 비유</th>
+            <th>예술로 볼 수 있는가 (근거 포함하여 쓰기)</th>
+            <th>예술로서의 가치</th>
+        </tr>
+        <tr>
+            <th>인간의 예술</th>
+            <td>인간 선수의 노력과 열정이 담긴 올림픽 경기</td>
+            <td>작가의 경험, 관점, 환경이 담겨 있으므로 예술이다.</td>
+            <td>감상자에게 남다른 감동을 줌</td>
+        </tr>
+        <tr>
+            <th>인공 지능의 예술</th>
+            <td><b>[  ㄱ  ]</b></td>
+            <td><b>[  ㄴ  ]</b></td>
+            <td><b>[  ㄷ  ]</b></td>
         </tr>
     </table>
     """, unsafe_allow_html=True)
@@ -371,69 +427,95 @@ with tab3:
     ans_3_1_3 = c3.text_input("(3) ㄷ :", key="3_1_3")
 
     # [서·논술형 2]
-    st.markdown('<p class="question-text">[서·논술형 2] 윗글을 활용하여 \'인공 지능이 그린 그림을 바라보는 시각\'에 대한 설명문을 작성하려 한다. 주어진 첫 문장에 이어지는 내용을 완성하시오.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">[서·논술형 2] 윗글을 활용하여 \'인공 지능이 그린 그림을 바라보는 시각\'에 대한 설명문을 작성하려 한다. 주어진 첫 문장에 이어지는 내용을 &lt;조건&gt;에 맞추어 작성하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
         <tr>
-            <th>주어진 첫 문장</th>
+            <th>주어진 문장</th>
             <td>인공 지능이 그린 그림이 늘어나는 요즘, 우리는 이 작품들을 어떤 눈으로 바라봐야 할지 올바르게 생각해야 한다.</td>
         </tr>
         <tr>
             <th>&lt;조건&gt;</th>
             <td>
-                1. 주어진 문장에 이어지는 문장을 (1), (2)에 각각 하나씩 작성할 것.<br>
-                2. (1)과 (2)에는 서로 다른 설명 방법이 1가지 이상 활용되어야 하며, 각 문장의 끝에 설명 방법의 명칭을 괄호에 넣어 기재할 것.<br>
-                3. 윗글에 제시된 내용만을 활용하고, 두 문장이 유기적인 논리적 흐름을 갖도록 서술할 것.
+                ○ 주어진 문장에 이어지는 문장을 (1), (2)에 각각 하나씩 작성할 것.<br>
+                ○ (1)과 (2)에는 서로 다른 설명 방법이 1가지 이상 활용되어야 하며, 각 문장에 사용된 설명 방법의 명칭을 괄호에 넣어 문장 끝에 기재할 것.<br>
+                ○ 윗글에 제시된 내용만을 활용하고, (1)과 (2)가 논리적 흐름을 갖고 이어지도록 할 것.
             </td>
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_3_2_1 = st.text_input("(1) :", key="3_2_1")
-    ans_3_2_2 = st.text_input("(2) :", key="3_2_2")
+    ans_3_2_1 = st.text_input("(1)", key="3_2_1")
+    ans_3_2_2 = st.text_input("(2)", key="3_2_2")
 
     # [서·논술형 3]
-    st.markdown('<p class="question-text">[서·논술형 3] 윗글을 바탕으로 \'인공 지능이 그린 그림을 바라보는 시각\'을 설명하는 영상 기획안 중, [장면 2] 마음에 울림을 주는 진정한 예술 부분을 완성하시오.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="question-text">[서·논술형 3] 윗글을 바탕으로 \'인공 지능이 그린 그림을 바라보는 시각\'을 설명하는 영상을 제작하려 한다. 다음 기획안을 보고 물음에 답하시오.</p>', unsafe_allow_html=True)
     st.markdown("""
     <table class="info-table">
         <tr>
+            <th>[영상 기획안]</th>
+            <td>
+                ○ 주제: 인간의 감정이 담긴 진정한 예술의 가치<br>
+                ○ 세부 내용 계획<br>
+                &nbsp;&nbsp;[장면 1] 감정이 없는 완벽한 기술<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 시각 요소: 로봇이 한 번의 실수 없이 완벽하게 피겨 스케이팅을 해내지만 우리의 마음을 울리지는 못하는 동영상을 보여줌.<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 청각 요소: 기계음이나 일정한 박자의 메트로놈 소리를 깔아 차갑고 정형화된 분위기를 조성함.<br>
+                &nbsp;&nbsp;[장면 2] 마음에 울림을 주는 진정한 예술<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 시각 요소: <b>Ⓐ ( &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; )</b><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;- 청각 요소: <b>Ⓑ ( &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; )</b>
+            </td>
+        </tr>
+        <tr>
             <th>&lt;조건&gt;</th>
             <td>
-                1. 윗글을 바탕으로 인간이 만들어내는 예술의 특성이 잘 드러나도록 시각 요소(A)와 청각 요소(B) 연출 계획을 세울 것.<br>
-                2. 설정한 시각 및 청각 요소의 연출 효과를 각각 서술하되, 반드시 윗글의 내용을 근거(인간의 감정, 노력 등)로 포함할 것.
+                ○ 윗글을 바탕으로 인간이 만들어내는 예술의 특성이 잘 드러나도록 Ⓐ와 Ⓑ에 들어갈 연출 계획을 세울 것.<br>
+                ○ 설정한 시각 및 청각 요소의 연출 효과를 각각 서술하되, 반드시 윗글의 내용을 근거로 포함할 것.
             </td>
         </tr>
     </table>
     """, unsafe_allow_html=True)
-    ans_3_3_v = st.text_area("(1) 시각 요소(Ⓐ) 및 효과 :", key="3_3_v", height=80)
-    ans_3_3_a = st.text_area("(2) 청각 요소(Ⓑ) 및 효과 :", key="3_3_a", height=80)
+    ans_3_3_v = st.text_input("(1) 시각 요소(Ⓐ):", key="3_3_v")
+    ans_3_3_v_eff = st.text_input("시각 요소(Ⓐ)의 효과:", key="3_3_v_eff")
+    ans_3_3_a = st.text_input("(2) 청각 요소(Ⓑ):", key="3_3_a")
+    ans_3_3_a_eff = st.text_input("청각 요소(Ⓑ)의 효과:", key="3_3_a_eff")
 
-    if st.button("문제 3 채점하기", type="primary", key="btn_3"):
+    if st.button("제출하기", type="primary", key="btn_3"):
         errors = []
         
         if not ('로봇' in ans_3_1_1 and '피겨' in ans_3_1_1):
-            errors.append({"문항": "[서·논술형 1] (1) ㄱ", "포인트": "비유적 유추 관계 매칭", "부족": "지문에서 인공지능 그림을 설명하기 위해 활용한 올림픽 비유 대상인 '로봇의 완벽한 피겨 스케이팅' 내용이 빠져 있습니다."})
+            errors.append({"문항": "[서·논술형 1] (1) ㄱ", "포인트": "비유적 대응 유추 (로봇이 실수 없이 완벽하게 해내는 피겨 스케이팅)", "부족": "지문 속에서 인공지능에 일치시켜 비유한 대상인 '로봇의 피겨 스케이팅' 내용이 유실되었습니다."})
         if not (('아니다' in ans_3_1_2 or '어렵다' in ans_3_1_2) and ('감정' in ans_3_1_2 or '철학' in ans_3_1_2 or '이야기' in ans_3_1_2)):
-            errors.append({"문항": "[서·논술형 1] (2) ㄴ", "포인트": "판단 결과와 명확한 텍스트 근거 매칭", "부족": "인공지능 작품을 예술로 규정하기 어려운 명확한 이유인 '독자적 철학이나 감정의 부재'가 결론과 함께 명시되어야 합니다."})
+            errors.append({"문항": "[서·논술형 1] (2) ㄴ", "포인트": "판단 결과와 명확한 본문 근거 기술 (예술로 보기 어려움 - 감정과 철학 부재)", "부족": "감정이나 독자적 철학이 없기 때문에 예술로 보기 어렵다는 인과적 근거 서술이 충족되지 않았습니다."})
         if not ('변화' in ans_3_1_3 or '확장' in ans_3_1_3 or '상징' in ans_3_1_3):
-            errors.append({"문항": "[서·논술형 1] (3) ㄷ", "포인트": "대상의 다각적 의미 및 가치 인정성 기술", "부족": "인간의 예술적 감동은 없으나 지문에 기술된 '미술계 변화 유도' 혹은 '예술 범주 확장'의 의의 설명이 명확하지 않습니다."})
+            errors.append({"문항": "[서·논술형 1] (3) ㄷ", "포인트": "대상의 가치 및 의의 서술 (미술계 변화 / 예술 범주 확장)", "부족": "인공지능 작품이 가지는 가치인 '미술계의 변화 초래' 또는 '예술 범주 확장'의 의미 규정이 미흡합니다."})
             
         m1 = re.search(r'\(([^)]+)\)', ans_3_2_1)
         m2 = re.search(r'\(([^)]+)\)', ans_3_2_2)
         if not (m1 and m2):
-            errors.append({"문항": "[서·논술형 2]", "포인트": "요구 조건 서식 엄밀 적용 및 논리 전개", "부족": "문장 끝 괄호 안에 알맞은 국어 설명 기법 명칭을 누락했거나, 텍스트 전반의 유기성이 부족합니다."})
+            errors.append({"문항": "[서·논술형 2]", "포인트": "국어과 설명 기법 활용 및 지정 문장 구조화", "부족": "문장 끝 괄호 서식 조건 및 두 문장 간의 유기적 논리 흐름 형성이 조건에 부합하지 않습니다."})
             
         if not (('인간' in ans_3_3_v or '선수' in ans_3_3_v or '땀' in ans_3_3_v) and ('음악' in ans_3_3_a or '환호' in ans_3_3_a or '박수' in ans_3_3_a)) or '기계음' in ans_3_3_a:
-            errors.append({"문항": "[서·논술형 3]", "포인트": "인간의 예술성 발현 조건과 일치하는 미디어 연출 기획", "부족": "인간 예술 고유의 가치인 감정, 노력, 철학 등이 살아나는 시청각 기획안과 마음의 울림 효과가 명시되지 않고 기계적 요소를 혼합했습니다."})
+            errors.append({"문항": "[서·논술형 3]", "포인트": "인간 고유의 감성/노력에 대응하는 미디어 연출 기획", "부족": "인간 예술 고유의 가치인 감정, 노력, 열정이 살아나는 미디어 구성안과 마음의 울림 효과가 올바르게 드러나지 않았습니다."})
 
         st.session_state.wrong_details[3] = errors
         st.markdown("#### 🎯 채점 결과 리포트")
         if not errors:
             st.session_state.resolved[3] = True
-            st.success("🎉 모든 조건을 완벽하게 충족하셨습니다! 고생하셨습니다.")
+            st.success("🎉 모든 조건을 완벽하게 충족하셨습니다! 대단원 학습이 완료되었습니다.")
             st.balloons()
         else:
             st.session_state.resolved[3] = False
-            st.error(f"❌ {len(errors)}개의 문항에서 조건 미충족 혹은 오답이 발견되었습니다. '📚 복습할 내용' 탭을 확인해 보세요.")
+            st.error(f"❌ 감점 혹은 조건 미충족 사항이 발견되었습니다. 아래 모범답안이나 '📚 복습할 내용' 탭을 확인해 보세요.")
+
+    with st.expander("📖 문제 3 모범답안 보기"):
+        st.markdown("""
+        - **[서·논술형 1]** (1) 로봇이 한 번의 실수 없이 완벽하게 피겨 스케이팅을 해내는 것 / (2) 감정도 느끼지 못하고 독자적인 철학이나 이야기가 없기 때문에 예술로 보기 어렵다 / (3) 미술계에 큰 변화를 가져오고 예술의 범주를 확장할 수 있는 상징적 가치
+        - **[서·논술형 2]**
+          - (1) 인간이 만든 예술이란 작가의 고유한 감정이나 철학, 살아온 경험 등이 종합적으로 담겨 마음을 울리는 것을 뜻한다. **(정의)**
+          - (2) 반면 인공 지능은 감정이 전혀 없고 독자적인 이야기가 없으므로 인간의 예술과 차이가 있다. **(대조)**
+        - **[서·논술형 3]**
+          - (1) 시각 요소(Ⓐ): 올림픽 경기에서 피와 땀을 흘리며 열정적으로 연기한 뒤 관객들의 환호 속에 눈물을 흘리는 인간 선수의 얼굴을 클로즈업한다. / 효과: 작가의 치열한 노력과 고유한 감정이 예술의 본질임을 극적으로 각인시킨다.
+          - (2) 청각 요소(Ⓑ): 가슴을 울리는 웅장한 오케스트라 선율 위에 관객들의 뜨거운 박수와 거친 숨소리를 입힌다. / 효과: 기계적 정형성과 대조되는 인간 고유의 감정선과 생명력을 청각적으로 전달하여 마음의 울림(감동)을 유발한다.
+        """)
 
 # ==============================================================================
 # [📚 복습할 내용] - 동적 조건 불충족 문제 피드백 바인딩
@@ -445,9 +527,9 @@ with tab4:
     total_errors = sum(len(st.session_state.wrong_details[i]) for i in [1, 2, 3])
     
     if total_errors == 0:
-        st.info("💡 아직 채점을 진행하지 않았거나 틀린 문제가 없습니다. 조건을 충족하지 못한 문항이 있으면 여기에 개별 맞춤형 복습 포인트가 실시간으로 표시됩니다.")
+        st.info("💡 제출 버튼을 누른 문제 중, 조건을 충족하지 못한 문제가 있을 때 여기에 핵심 복습 가이드와 내 답안의 부족한 점이 실시간으로 표시됩니다. 먼저 문제를 풀고 '제출하기'를 진행해 주세요!")
     else:
-        st.warning(f"⚠️ 현재 {total_errors}개의 세부 문항에서 조건 미충족 사항이 발견되었습니다. 아래 요소를 보완하여 다시 작성해 보세요.")
+        st.warning(f"⚠️ 현재 보완해야 할 조건 미충족 사항이 {total_errors}개 있습니다. 피드백을 확인한 후 다시 작성해 보세요.")
         
         for q_num in [1, 2, 3]:
             if st.session_state.wrong_details[q_num]:
