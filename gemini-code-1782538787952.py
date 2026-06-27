@@ -133,15 +133,14 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
     
-    # 1번 문항 세트 시작
-    st.subheader("[서·논술형 1] 표 빈칸 채우기")
-    st.markdown("윗글을 요약하여 정리한 표의 빈칸에 들어갈 내용을 알맞게 찾아 쓰시오.")
+    st.markdown("### 문항 1")
+    st.markdown("윗글을 요약하여 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.")
     c1, c2, c3 = st.columns(3)
-    ans_1_1 = c1.text_input("(1) 어려운 과제와 대비되는 '과제의 특성'", key="1_1")
-    ans_1_2 = c2.text_input("(2) 어려운 과제를 해결하기 위한 '효율적인 환경 및 방법'", key="1_2")
-    ans_1_3 = c3.text_input("(3) 어려운 과제와 관련된 '심리 현상' 용어", key="1_3")
+    ans_1_1 = c1.text_input("(1) ㄱ:", key="1_1")
+    ans_1_2 = c2.text_input("(2) ㄴ:", key="1_2")
+    ans_1_3 = c3.text_input("(3) ㄷ:", key="1_3")
     
-    st.subheader("[서·논술형 2] 조건에 맞춰 설명문 완성하기")
+    st.markdown("### 문항 2")
     st.markdown("윗글을 활용하여 '과제 난이도에 따른 효율적인 학습 전략'에 대한 설명문을 작성하려 한다. 주어진 첫 문장('과제의 특성과 난이도에 따라 우리의 학습 효율을 높이는 방법은 다르게 적용되어야 한다.')에 이어지는 내용을 완성하시오.")
     st.markdown("""
     <div class="condition-container">
@@ -153,10 +152,12 @@ with tab1:
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    c_ans1 = st.text_input("(1) 첫 번째 이어질 문장", key="2_1")
-    c_ans2 = st.text_input("(2) 두 번째 이어질 문장", key="2_2")
     
-    st.subheader("[서·논술형 3] 영상 기획안 연출 및 효과 작성")
+    st.markdown('<div class="input-label">• 답안 입력</div>', unsafe_allow_html=True)
+    c_ans1 = st.text_input("(1)", key="2_1", placeholder="첫 번째 문장을 입력하세요.")
+    c_ans2 = st.text_input("(2)", key="2_2", placeholder="두 번째 문장을 입력하세요.")
+    
+    st.markdown("### 문항 3")
     st.markdown("윗글을 바탕으로 '상황에 맞는 학습 공간 선택법'을 설명하는 영상을 제작할 때, 어려운 과제를 할 때의 [장면 2] 기획안을 완성하시오.")
     st.markdown("""
     <div class="condition-container">
@@ -167,50 +168,49 @@ with tab1:
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    ans_3_v = st.text_area("시각 요소(Ⓐ) 및 시각 요소의 효과 서술", key="3_1")
-    ans_3_a = st.text_area("청각 요소(Ⓑ) 및 청각 요소의 효과 서술", key="3_2")
+    
+    st.markdown('<div class="input-label">• 답안 입력</div>', unsafe_allow_html=True)
+    ans_3_v = st.text_area("(1) 시각 요소(Ⓐ) 및 효과", key="3_1")
+    ans_3_a = st.text_area("(2) 청각 요소(Ⓑ) 및 효과", key="3_2")
 
     if st.button("문제 1 채점하기", type="primary", key="btn_1"):
         score = 0
         st.markdown("#### 🎯 채점 결과 리포트")
         
-        # [서논술 1 채점]
         if ('쉬운' in ans_1_1 or '낮은' in ans_1_1) and ('과제' in ans_1_1 or '취미' in ans_1_1):
-            st.success("✅ [서·논술형 1-1] 통과 (과제의 특성 파악 완료)")
+            st.success("✅ 문항 1 - (1) ㄱ 통과")
             score += 1
         else:
-            st.error("❌ [서·논술형 1-1] 오답: 지문의 '비교적 쉬운 취미 생활이나 과제' 내용을 기술해야 합니다.")
+            st.error("❌ 문항 1 - (1) ㄱ 오답: 지문의 '비교적 쉬운 취미 생활이나 과제' 내용을 요약해 주세요.")
             
         if '혼자' in ans_1_2 and ('집중' in ans_1_2 or '차분' in ans_1_2):
             if '도서관' in ans_1_2 or '모임' in ans_1_2:
-                st.error("❌ [서·논술형 1-2] 오개념 감점: 어려운 과제 환경에 '모임/도서관' 등 촉진 환경을 혼용했습니다.")
+                st.error("❌ 문항 1 - (2) ㄴ 오개념 발견: 어려운 과제 환경에 도서관, 모임의 속성을 잘못 부여했습니다.")
             else:
-                st.success("✅ [서·논술형 1-2] 통과 (환경 및 방법 설정 완료)")
+                st.success("✅ 문항 1 - (2) ㄴ 통과")
                 score += 1
         else:
-            st.error("❌ [서·논술형 1-2] 오답: '차분하게 혼자 집중하는 시간'의 의미가 포함되어야 합니다.")
+            st.error("❌ 문항 1 - (2) ㄴ 오답: '차분하게 혼자 집중하는 시간'의 의미가 포함되어야 합니다.")
             
         if normalize(ans_1_3) == "사회적억제":
-            st.success("✅ [서·논술형 1-3] 통과 (정확한 고유 용어 매칭)")
+            st.success("✅ 문항 1 - (3) ㄷ 통과")
             score += 1
         else:
-            st.error("❌ [서·논술형 1-3] 오답: 올바른 심리 현상 용어 원형은 '사회적 억제'입니다.")
+            st.error("❌ 문항 1 - (3) ㄷ 오답: 정확한 고유 용어인 '사회적 억제'를 적어야 합니다.")
             
-        # [서논술 2 채점]
         m1 = re.search(r'\(([^)]+)\)', c_ans1)
         m2 = re.search(r'\(([^)]+)\)', c_ans2)
         if m1 and m2:
-            st.success("✅ [서·논술형 2] 조건 충족 (설명 방법의 명칭 및 조건 형태 확인 완료)")
+            st.success("✅ 문항 2 통과 (설명 방법 표기 조건 충족)")
             score += 1
         else:
-            st.error("❌ [서·논술형 2] 미흡: 문장 끝에 괄호를 사용하여 사용한 설명 방법 명칭을 명시하세요.")
+            st.error("❌ 문항 2 미흡: 문장 끝에 활용한 설명 방법 명칭을 괄호 기호 안에 명시하세요.")
             
-        # [서논술 3 채점]
         if ('혼자' in ans_3_v or '독립' in ans_3_v) and ('조용' in ans_3_a or '소음' in ans_3_a) and ('효과' in ans_3_v and '효과' in ans_3_a):
-            st.success("✅ [서·논술형 3] 통과 (시청각 요소 연출 및 지문 근거 효과 포함 완료)")
+            st.success("✅ 문항 3 통과 (시청각 연출 계획 및 근거 효과 완비)")
             score += 1
         else:
-            st.error("❌ [서·논술형 3] 미흡: 어려운 과제 특성에 맞는 연출 계획 및 지문 근거 기반의 기대 효과가 부족합니다.")
+            st.error("❌ 문항 3 미흡: 어려운 과제의 특성을 반영한 시청각 연출 및 이에 따른 기대 효과가 명시되어야 합니다.")
 
         if score == 5:
             st.session_state.resolved[1] = True
@@ -234,14 +234,14 @@ with tab2:
     </div>
     """, unsafe_allow_html=True)
     
-    st.subheader("[서·논술형 1] 표 빈칸 채우기")
-    st.markdown("윗글을 요약하여 정리한 표의 빈칸에 들어갈 알맞은 내용을 찾아 쓰시오.")
+    st.markdown("### 문항 1")
+    st.markdown("윗글을 요약하여 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.")
     c1, c2, c3 = st.columns(3)
-    ans_2_1_1 = c1.text_input("(1) 정전기의 '물의 상태에 비유'", key="2_1_1")
-    ans_2_1_2 = c2.text_input("(2) 정전기의 '전하의 상태'", key="2_1_2")
-    ans_2_1_3 = c3.text_input("(3) 정전기의 '위험성' 판단", key="2_1_3")
+    ans_2_1_1 = c1.text_input("(1) ㄱ:", key="2_1_1")
+    ans_2_1_2 = c2.text_input("(2) ㄴ:", key="2_1_2")
+    ans_2_1_3 = c3.text_input("(3) ㄷ:", key="2_1_3")
 
-    st.subheader("[서·논술형 2] 조건에 맞춰 설명문 완성하기")
+    st.markdown("### 문항 2")
     st.markdown("윗글을 활용하여 '정전기의 특징'에 대한 설명문을 작성하려 한다. 주어진 첫 문장('겨울철에 흔히 겪는 정전기는 우리가 평소 집에서 사용하는 전기와는 다른 뚜렷한 특징이 있다.')에 이어지는 내용을 완성하시오.")
     st.markdown("""
     <div class="condition-container">
@@ -253,10 +253,12 @@ with tab2:
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    ans_2_2_1 = st.text_input("(1) 첫 번째 이어질 문장", key="2_2_1")
-    ans_2_2_2 = st.text_input("(2) 두 번째 이어질 문장", key="2_2_2")
+    
+    st.markdown('<div class="input-label">• 답안 입력</div>', unsafe_allow_html=True)
+    ans_2_2_1 = st.text_input("(1)", key="2_2_1")
+    ans_2_2_2 = st.text_input("(2)", key="2_2_2")
 
-    st.subheader("[서·논술형 3] 영상 기획안 연출 및 효과 작성")
+    st.markdown("### 문항 3")
     st.markdown("윗글을 바탕으로 '정전기의 특징'을 설명하는 영상 기획안 중, [장면 2] 정전기(고여 있는 물) 부분을 완성하시오.")
     st.markdown("""
     <div class="condition-container">
@@ -267,50 +269,52 @@ with tab2:
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    ans_2_3_v = st.text_area("시각 요소(Ⓐ) 및 연출 효과 서술", key="2_3_v")
-    ans_2_3_a = st.text_area("청각 요소(Ⓑ) 및 연출 효과 서술", key="2_3_a")
+    
+    st.markdown('<div class="input-label">• 답안 입력</div>', unsafe_allow_html=True)
+    ans_2_3_v = st.text_area("(1) 시각 요소(Ⓐ) 및 효과", key="2_3_v")
+    ans_2_3_a = st.text_area("(2) 청각 요소(Ⓑ) 및 효과", key="2_3_a")
 
     if st.button("문제 2 채점하기", type="primary", key="btn_2"):
         score2 = 0
         st.markdown("#### 🎯 채점 결과 리포트")
         
         if '고여' in ans_2_1_1 or '갇혀' in ans_2_1_1:
-            st.success("✅ [서·논술형 1-1] 통과 (정지된 물 속성 비유 일치)")
+            st.success("✅ 문항 1 - (1) ㄱ 통과")
             score2 += 1
         else:
-            st.error("❌ [서·논술형 1-1] 오답: 지문의 '고여 있는 물' 표현의 의미가 포함되어야 합니다.")
+            st.error("❌ 문항 1 - (1) ㄱ 오답: 지문의 '고여 있는 물' 비유를 확인하세요.")
             
         if '이동하지' in ans_2_1_2 or '머물' in ans_2_1_2 or '정지' in ans_2_1_2:
             if '흐르는' in ans_2_1_2:
-                st.error("❌ [서·논술형 1-2] 오개념 감점: 정전기 설명에 실생활 전기의 특징인 '흐름'을 사용했습니다.")
+                st.error("❌ 문항 1 - (2) ㄴ 오개념 발견: 정전기 설명에 실생활 전기의 특징('흐름')을 기술했습니다.")
             else:
-                st.success("✅ [서·논술형 1-2] 통과 (전하 상태 파악 완료)")
+                st.success("✅ 문항 1 - (2) ㄴ 통과")
                 score2 += 1
         else:
-            st.error("❌ [서·논술형 1-2] 오답: '전하가 이동하지 않고 머물러 있음'의 뜻이 드러나야 합니다.")
+            st.error("❌ 문항 1 - (2) ㄴ 오답: '전하가 이동하지 않고 머물러 있음'의 뜻이 드러나야 합니다.")
             
         if '위험하지' in ans_2_1_3 or '안전' in ans_2_1_3 or '피해가없' in normalize(ans_2_1_3):
-            st.success("✅ [서·논술형 1-3] 통과 (위험성 판단 결론 확인 완료)")
+            st.success("✅ 문항 1 - (3) ㄷ 통과")
             score2 += 1
         else:
-            st.error("❌ [서·논술형 1-3] 오답: 최종 판단 결과는 '위험하지 않음'입니다.")
+            st.error("❌ 문항 1 - (3) ㄷ 오답: 위험성 유무 결과는 '위험하지 않음'입니다.")
             
         m1 = re.search(r'\(([^)]+)\)', ans_2_2_1)
         m2 = re.search(r'\(([^)]+)\)', ans_2_2_2)
         if m1 and m2:
-            st.success("✅ [서·논술형 2] 조건 충족 (설명 방법 표기 확인 완료)")
+            st.success("✅ 문항 2 통과")
             score2 += 1
         else:
-            st.error("❌ [서·논술형 2] 미흡: 각 문장의 끝에 사용한 설명 방법의 명칭을 괄호 기호 안에 정확히 적으세요.")
+            st.error("❌ 문항 2 미흡: 설명 방법 명칭을 문장 끝 괄호 안에 정확히 명시해 주세요.")
 
         if ('댐' in ans_2_3_v or '호수' in ans_2_3_v or '고여' in ans_2_3_v) and ('고요' in ans_2_3_a or '침묵' in ans_2_3_a):
             if '폭포' in ans_2_3_a or '웅장' in ans_2_3_a:
-                st.error("❌ [서·논술형 3] 오개념 감점: 정전기 연출에 실생활 전기의 성격인 폭포/웅장한 소리를 사용했습니다.")
+                st.error("❌ 문항 3 오개념 발견: 정전기 연출에 실생활 전기의 성격인 폭포/웅장 소리를 융합했습니다.")
             else:
-                st.success("✅ [서·논술형 3] 통과 (시청각 연출 계획 및 지문 근거 부합 완료)")
+                st.success("✅ 문항 3 통과")
                 score2 += 1
         else:
-            st.error("❌ [서·논술형 3] 미흡: 정전기의 특성인 '고여 있음/정적임'을 살린 연출과 지문 근거 효과를 명시해 주세요.")
+            st.error("❌ 문항 3 미흡: 정적인 환경을 고려한 연출 기획과 지문 근거 효과 설명이 부족합니다.")
 
         if score2 == 5:
             st.session_state.resolved[2] = True
@@ -334,14 +338,14 @@ with tab3:
     </div>
     """, unsafe_allow_html=True)
     
-    st.subheader("[서·논술형 1] 표 빈칸 채우기")
-    st.markdown("윗글을 요약하여 정리한 표의 빈칸에 들어갈 알맞은 내용을 찾아 쓰시오.")
+    st.markdown("### 문항 1")
+    st.markdown("윗글을 요약하여 표로 정리하였다. ㄱ~ㄷ에 들어갈 내용을 찾아 쓰시오.")
     c1, c2, c3 = st.columns(3)
-    ans_3_1_1 = c1.text_input("(1) 인공지능 작품의 올림픽 경기 '비유 대상'", key="3_1_1")
-    ans_3_1_2 = c2.text_input("(2) '예술로 볼 수 있는가'에 대한 판단 (근거 포함)", key="3_1_2")
-    ans_3_1_3 = c3.text_input("(3) 인공지능 그림의 '예술로서의 가치'", key="3_1_3")
+    ans_3_1_1 = c1.text_input("(1) ㄱ:", key="3_1_1")
+    ans_3_1_2 = c2.text_input("(2) ㄴ:", key="3_1_2")
+    ans_3_1_3 = c3.text_input("(3) ㄷ:", key="3_1_3")
 
-    st.subheader("[서·논술형 2] 조건에 맞춰 설명문 완성하기")
+    st.markdown("### 문항 2")
     st.markdown("윗글을 활용하여 '인공 지능이 그린 그림을 바라보는 시각'에 대한 설명문을 작성하려 한다. 주어진 첫 문장('인공 지능이 그린 그림이 늘어나는 요즘, 우리는 이 작품들을 어떤 눈으로 바라봐야 할지 올바르게 생각해야 한다.')에 이어지는 내용을 완성하시오.")
     st.markdown("""
     <div class="condition-container">
@@ -353,10 +357,12 @@ with tab3:
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    ans_3_2_1 = st.text_input("(1) 첫 번째 이어질 문장", key="3_2_1")
-    ans_3_2_2 = st.text_input("(2) 두 번째 이어질 문장", key="3_2_2")
+    
+    st.markdown('<div class="input-label">• 답안 입력</div>', unsafe_allow_html=True)
+    ans_3_2_1 = st.text_input("(1)", key="3_2_1")
+    ans_3_2_2 = st.text_input("(2)", key="3_2_2")
 
-    st.subheader("[서·논술형 3] 영상 기획안 연출 및 효과 작성")
+    st.markdown("### 문항 3")
     st.markdown("윗글을 바탕으로 '인공 지능이 그린 그림을 바라보는 시각'을 설명하는 영상 기획안 중, [장면 2] 마음에 울림을 주는 진정한 예술 부분을 완성하시오.")
     st.markdown("""
     <div class="condition-container">
@@ -367,47 +373,49 @@ with tab3:
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    ans_3_3_v = st.text_area("시각 요소(Ⓐ) 및 연출 효과 서술", key="3_3_v")
-    ans_3_3_a = st.text_area("청각 요소(Ⓑ) 및 연출 효과 서술", key="3_3_a")
+    
+    st.markdown('<div class="input-label">• 답안 입력</div>', unsafe_allow_html=True)
+    ans_3_3_v = st.text_area("(1) 시각 요소(Ⓐ) 및 효과", key="3_3_v")
+    ans_3_3_a = st.text_area("(2) 청각 요소(Ⓑ) 및 효과", key="3_3_a")
 
     if st.button("문제 3 채점하기", type="primary", key="btn_3"):
         score3 = 0
         st.markdown("#### 🎯 채점 결과 리포트")
         
         if '로봇' in ans_3_1_1 and '피겨' in ans_3_1_1:
-            st.success("✅ [서·논술형 1-1] 통과 (올림픽 비유 대상 추출 성공)")
+            st.success("✅ 문항 1 - (1) ㄱ 통과")
             score3 += 1
         else:
-            st.error("❌ [서·논술형 1-1] 오답: 지문에 서술된 '로봇의 피겨 스케이팅' 대상이 명시되어야 합니다.")
+            st.error("❌ 문항 1 - (1) ㄱ 오답: 비유 수단인 '로봇의 피겨 스케이팅' 내용이 명시되어야 합니다.")
             
         if ('아니다' in ans_3_1_2 or '어렵다' in ans_3_1_2) and ('감정' in ans_3_1_2 or '철학' in ans_3_1_2 or '이야기' in ans_3_1_2):
-            st.success("✅ [서·논술형 1-2] 통과 (예술 여부 판단 결론 및 근거 일치)")
+            st.success("✅ 문항 1 - (2) ㄴ 통과")
             score3 += 1
         else:
-            st.error("❌ [서·논술형 1-2] 오답: '예술로 보기 어렵다'는 최종 결론 방향과 '감정/철학 부재'라는 근거가 명시되어야 합니다.")
+            st.error("❌ 문항 1 - (2) ㄴ 오답: '예술로 보기 어렵다'는 결론과 '감정/철학의 부재'라는 지문 핵심 근거가 나타나야 합니다.")
             
         if '변화' in ans_3_1_3 or '확장' in ans_3_1_3 or '상징' in ans_3_1_3:
-            st.success("✅ [서·논술형 1-3] 통과 (미술사적 의의 및 상징적 가치 서술 완료)")
+            st.success("✅ 문항 1 - (3) ㄷ 통과")
             score3 += 1
         else:
-            st.error("❌ [서·논술형 1-3] 오답: 지문에 제시된 가치인 '미술계 변화' 또는 '예술 범주 확장'의 의미를 활용하세요.")
+            st.error("❌ 문항 1 - (3) ㄷ 오답: 지문에 서술된 가치인 '미술계 변화' 혹은 '예술 범주 확장'의 뜻이 기술되어야 합니다.")
 
         m1 = re.search(r'\(([^)]+)\)', ans_3_2_1)
         m2 = re.search(r'\(([^)]+)\)', ans_3_2_2)
         if m1 and m2:
-            st.success("✅ [서·논술형 2] 조건 충족 (설명 방법 조건 만족)")
+            st.success("✅ 문항 2 통과")
             score3 += 1
         else:
-            st.error("❌ [서·논술형 2] 미흡: 두 문장 끝에 활용한 설명 방법의 명칭을 각각 괄호 안에 적어주셔야 합니다.")
+            st.error("❌ 문항 2 미흡: 문장 끝에 활용한 설명 방법 명칭을 괄호 안에 알맞게 적으세요.")
 
         if ('인간' in ans_3_3_v or '선수' in ans_3_3_v or '땀' in ans_3_3_v) and ('음악' in ans_3_3_a or '환호' in ans_3_3_a or '박수' in ans_3_3_a):
             if '기계음' in ans_3_3_a:
-                st.error("❌ [서·논술형 3] 오개념 감점: 인간 예술 장면 연출에 AI의 성격인 '기계음'을 혼용했습니다.")
+                st.error("❌ 문항 3 오개념 발견: 인간의 예술 연출 공간에 AI 속성인 '기계음'을 활용했습니다.")
             else:
-                st.success("✅ [서·논술형 3] 통과 (인간 특성을 고려한 연출 및 감동 효과 기술 완료)")
+                st.success("✅ 문항 3 통과")
                 score3 += 1
         else:
-            st.error("❌ [서·논술형 3] 미흡: 인간의 열정과 감정, 관점이 드러나는 시청각 연출과 마음의 울림 효과가 명시되어야 합니다.")
+            st.error("❌ 문항 3 미흡: 인간의 열정적 요소가 강조된 연출 기획과 지문 근거가 명시되어야 합니다.")
 
         if score3 == 5:
             st.session_state.resolved[3] = True
@@ -417,20 +425,19 @@ with tab3:
 # [📚 복습할 내용]
 # ==============================================================================
 with tab4:
-    st.markdown("### 📚 대단원 핵심 개념 및 서논술형 가이드")
-    st.write("감점 없는 완벽한 서·논술형 답안 작성을 위해 교과서에 제시된 설명 방법을 복습해 봅시다.")
+    st.markdown("### 📚 대단원 핵심 개념 및 가이드 요약")
+    st.write("감점 없는 서·논술형 답안 작성을 위해 아래 요약표를 꼭 기억해 주세요.")
     
     st.table([
-        {"설명 방법": "정의", "핵심 내용": "대상의 뜻, 개념 등을 밝힐 때 사용함 (예: 우정이란 ~을 말한다)"},
-        {"설명 방법": "예시", "핵심 내용": "구체적인 예를 바탕으로 대상을 설명할 때 사용함"},
-        {"설명 방법": "인과", "핵심 내용": "원인과 결과를 중심으로 대상을 설명할 때 사용함"},
-        {"설명 방법": "분석", "핵심 내용": "여러 요소나 부분으로 이루어진 구조적 대상을 쪼개어 설명할 때 사용함"},
-        {"설명 방법": "비교와 대조", "핵심 내용": "둘 이상의 대상의 공통점(비교)과 차이점(대조)을 드러내어 설명함"},
-        {"설명 방법": "분류와 구분", "핵심 내용": "대상을 일정한 기준에 따라 종류별로 묶거나 나눌 때 사용함"}
+        {"설명 방법": "정의", "핵심 내용": "대상의 본질이나 개념을 명확하게 규정하여 설명함"},
+        {"설명 방법": "예시", "핵심 내용": "구체적이고 친숙한 사례를 들어 독자의 이해를 도움"},
+        {"설명 방법": "인과", "핵심 내용": "원인과 결과를 중심으로 대상을 논리적으로 설명함"},
+        {"설명 방법": "분석", "핵심 내용": "하나의 대상을 구성 요소나 여러 부분으로 쪼개어 기술함"},
+        {"설명 방법": "비교와 대조", "핵심 내용": "두 대상 간의 공통점(비교)과 차이점(대조)을 선명하게 부각함"}
     ])
     
     st.markdown("""
-    > 💡 **교과서 기반 핵심 평가 요약!**
-    > - **매체의 복합양식성 고려**: 영상 자료를 제작할 때는 문자, 소리, 그림 등 다양한 양식이 결합된 특성을 살려 주제를 효과적으로 드러내야 합니다.
-    > - **감점 방지 팁**: 한 개념의 특성(예: 실생활 전기가 흐르는 성질)을 다른 상반된 개념(정전기)의 성질에 뒤섞어 적으면 내용의 유기성이 깨져 감점 요인이 됩니다.
+    > 💡 **최종 점검 팁**
+    > - **형태 요건 준수**: 문항 요구사항에 설정된 괄호 서식 등 지시 규칙을 반드시 이행하세요.
+    > - **오개념 결합 원천 차단**: 한 개념의 특징을 반대되거나 이질적인 다른 개념 공간에 섞어 쓰지 않도록 논리를 정제하세요.
     """)
